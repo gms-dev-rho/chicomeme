@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Cookiebot: primo script della pagina, come sul sito della Fondazione -->
+<script type="text/javascript" id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="04dd77a5-cf8d-45e7-ba00-e7ae71e32293" data-culture="it" async></script>
+<title>Chi come me? Più persone di quanto pensi.</title>
+<meta name="description" content="Strumenti per capire, parlare e chiedere aiuto. Per genitori, insegnanti, educatori o per chi ha semplicemente a cuore i ragazzi. Da Unhate Foundation">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="only light">
+<link rel="icon" href="assets/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<!-- Anteprima di condivisione (WhatsApp, social): l'immagine deve avere l'indirizzo completo -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Chi come me? Più persone di quanto pensi.">
+<meta property="og:description" content="Strumenti per capire, parlare e chiedere aiuto. Per genitori, insegnanti, educatori o per chi ha semplicemente a cuore i ragazzi. Da Unhate Foundation">
+<meta property="og:url" content="https://www.unhatefoundation.org/chicomeme">
+<meta property="og:image" content="https://www.unhatefoundation.org/chicomeme/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Chi come me? Foto di scena: un ragazzo con una corona di carta, seduto su un letto davanti a un muro di mattoni.">
+<meta property="og:locale" content="it_IT">
+<meta property="og:site_name" content="Unhate Foundation">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="assets/font/poppins-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/font/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/stile.css?v=20261115d">
+<script>
+  /* Animazione d'apertura: una sola volta per visita, mai con "riduci movimento".
+     In sessionStorage salviamo solo un segnale "già vista", nessun dato personale. */
+  window.ccmTraccia = function (nome, parametri) {
+    if (typeof window.gtag === 'function') window.gtag('event', nome, parametri || {});
+  };
+  (function () {
+    try {
+      var ridotto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!ridotto && !sessionStorage.getItem('ccm-intro')) {
+        document.documentElement.classList.add('con-intro');
+      }
+    } catch (e) {}
+  })();
+</script>
+<script src="js/pagina.js?v=20261115d" defer></script>
+<!-- Google Analytics 4: Cookiebot lo attiva solo con il consenso "Marketing", come sul sito della Fondazione.
+     Senza consenso questi due script non vengono eseguiti e non parte nessuna chiamata a Google. -->
+<script type="text/plain" data-cookieconsent="marketing" src="https://www.googletagmanager.com/gtag/js?id=G-060Y6CT574" async></script>
+<script type="text/plain" data-cookieconsent="marketing">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', 'G-060Y6CT574');
+</script>
+</head>
+<body>
+
+<!-- ============ ANIMAZIONE D'APERTURA (decorativa) ============ -->
+<div class="intro" id="intro" aria-hidden="true" data-passo="0">
+  <div class="intro-schermo intro-nero" data-n="0">
+    <p class="intro-titolo">Chi come <span class="segnata">me<img class="pennellata" src="assets/loghi/unhate-pennellata.svg" alt=""></span>?</p>
+  </div>
+  <div class="intro-schermo intro-verde" data-n="1">
+    <p class="intro-frase"><span class="intro-attacco">Chi come me…</span> non sa più cosa chiedere a cena?</p>
+  </div>
+  <div class="intro-schermo intro-giallo" data-n="2">
+    <p class="intro-frase"><span class="intro-attacco">Chi come me…</span> ha paura di dire la cosa sbagliata?</p>
+  </div>
+  <div class="intro-schermo intro-rosa" data-n="3">
+    <p class="intro-frase"><span class="intro-attacco">Chi come me…</span> a volte non riconosce più suo figlio?</p>
+  </div>
+  <div class="intro-schermo intro-bianco" data-n="4">
+    <p class="intro-frase intro-finale">Più persone di quanto pensi.</p>
+  </div>
+  <p class="intro-salta">Tocca per saltare</p>
+</div>
+<script>
+  (function () {
+    var html = document.documentElement;
+    var intro = document.getElementById('intro');
+    /* Toglie del tutto l'animazione dalla pagina: nessun livello resta sopra i contenuti */
+    function togli() {
+      html.classList.remove('con-intro', 'intro-uscita');
+      if (intro && intro.parentNode) intro.parentNode.removeChild(intro);
+      intro = null;
+    }
+    if (!html.classList.contains('con-intro')) { togli(); return; }
+
+    /* cambi di schermata (ms): nero → verde → giallo → rosa → bianco;
+       il bianco "Più persone di quanto pensi." resta fermo 2 s, poi dissolvenza */
+    var cambi = [800, 1500, 2200, 2900];
+    var DISSOLVENZA_DA = 4900, DURATA_DISSOLVENZA = 450;
+    var timer = [];
+    var finita = false;
+    try { sessionStorage.setItem('ccm-intro', '1'); } catch (e) {}
+    function fine() {
+      if (finita) return;
+      finita = true;
+      timer.forEach(function (t) { clearTimeout(t); });
+      document.removeEventListener('keydown', salta);
+      togli();
+    }
+    function salta() { if (!finita) { window.ccmTraccia('salta_animazione'); fine(); } }
+    cambi.forEach(function (t, i) {
+      timer.push(setTimeout(function () { if (intro) intro.setAttribute('data-passo', i + 1); }, t));
+    });
+    timer.push(setTimeout(function () {
+      if (!intro) return;
+      intro.classList.add('svanisce');
+      html.classList.remove('con-intro');
+      html.classList.add('intro-uscita');
+      timer.push(setTimeout(fine, DURATA_DISSOLVENZA));
+    }, DISSOLVENZA_DA));
+    intro.addEventListener('pointerdown', salta);
+    document.addEventListener('keydown', salta);
+    /* rete di sicurezza: in ogni caso, dopo 6 s l'animazione non c'è più */
+    setTimeout(fine, 6000);
+    /* se il browser ripristina la pagina dalla cache (tasto indietro), niente animazione */
+    window.addEventListener('pageshow', function (e) { if (e.persisted) fine(); });
+  })();
+</script>
+
+<a class="salta-link" href="#contenuto">Vai al contenuto</a>
+
+<!-- ============ BARRA FISSA ============ -->
+<header class="barra">
+  <a class="barra-logo" href="https://www.unhatefoundation.org/it">
+    <img src="assets/loghi/unhate-logo-rgb-neg.svg" alt="Unhate Foundation" width="86" height="28">
+  </a>
+  <nav class="barra-azioni" aria-label="Collegamenti rapidi">
+    <a class="btn btn-verde btn-barra" href="#restiamo-in-contatto">Restiamo in contatto</a>
+    <a class="btn btn-arancio btn-barra" href="#a-chi-rivolgersi">A chi rivolgersi</a>
+  </nav>
+</header>
+
+<main id="contenuto">
+
+  <!-- ============ APERTURA ============ -->
+  <section class="apertura" aria-labelledby="titolo-pagina">
+    <p class="cobrand">
+      <span><em>Chi come me</em> di Roy Chen, regia di Andrée Ruth Shammah</span><span class="cobrand-sep" aria-hidden="true">|</span>
+      <span>Teatro Franco Parenti, Milano</span><span class="cobrand-sep" aria-hidden="true">|</span>
+      <span>Dicembre 2026</span>
+    </p>
+
+    <h1 id="titolo-pagina" class="titolo-apertura">Chi come <span class="segnata">me<img class="pennellata dipingi" src="assets/loghi/unhate-pennellata.svg" alt="" aria-hidden="true"></span>?</h1>
+
+    <p class="sottotitolo">Strumenti semplici per capire, parlare e, se serve, chiedere aiuto. Per genitori, insegnanti ed educatori.</p>
+
+    <div class="testo">
+      <p><em>Chi come me</em> racconta cinque adolescenti in un centro di salute mentale e il teatro che li aiuta a ritrovarsi. È nato da una storia vera: quella dell’autore Roy Chen, che nel 2019 ha trascorso settimane con i ragazzi di un centro di Tel Aviv.</p>
+      <p>Questa pagina è per te, se sei genitore, insegnante o educatore, o lavori con ragazzi giovani e spesso non li capisci, e vuoi continuare a farti domande anche dopo il sipario. Non trovi diagnosi né ricette: trovi spunti per guardare meglio, parole per iniziare una conversazione e indirizzi a cui rivolgerti.</p>
+      <p>Noi siamo Unhate Foundation: siamo partner dello spettacolo e lavoriamo al fianco dei più giovani e delle loro fragilità.</p>
+    </div>
+
+    <div class="apertura-azioni">
+      <a class="btn btn-nero btn-grande btn-apertura" href="#capire">Inizia da qui <svg class="ico" aria-hidden="true"><use href="assets/icone.svg#arrow-down"/></svg></a>
+      <a class="btn btn-verde btn-grande btn-apertura" href="#restiamo-in-contatto">Restiamo in contatto</a>
+    </div>
+  </section>
+
+  <!-- ============ PAUSA FOTOGRAFICA 1 ============ -->
+  <figure class="pausa tono-scuro">
+    <picture>
+      <source type="image/avif" srcset="assets/img/scena-corona-480.avif 480w, assets/img/scena-corona-800.avif 800w, assets/img/scena-corona-1200.avif 1200w" sizes="100vw">
+      <source type="image/webp" srcset="assets/img/scena-corona-480.webp 480w, assets/img/scena-corona-800.webp 800w, assets/img/scena-corona-1200.webp 1200w" sizes="100vw">
+      <img src="assets/img/scena-corona-800.jpg" srcset="assets/img/scena-corona-480.jpg 480w, assets/img/scena-corona-800.jpg 800w, assets/img/scena-corona-1200.jpg 1200w" sizes="100vw" width="1200" height="1600" loading="lazy" decoding="async" alt="Foto di scena di Chi come me: un ragazzo con una corona di carta, seduto su un letto davanti a un muro di mattoni decorato con gru di carta.">
+    </picture>
+  </figure>
+
+  <!-- ============ INDICE A PILLOLE ============ -->
+  <p class="indice-titoletto" id="indice-titolo">In questa pagina</p>
+  <nav class="indice" aria-labelledby="indice-titolo">
+    <ul>
+      <li><a href="#le-voci">Le voci</a></li>
+      <li><a href="#capire">Capire</a></li>
+      <li><a href="#parlarne">Parlarne</a></li>
+      <li><a href="#a-chi-rivolgersi">A chi rivolgersi</a></li>
+      <li><a href="#i-dati">I dati</a></li>
+      <li><a href="#per-la-scuola">Per la scuola</a></li>
+      <li><a href="#per-approfondire">Per approfondire</a></li>
+      <li><a href="#restiamo-in-contatto">Restiamo in contatto</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============ LE VOCI ============ -->
+  <section class="sezione sezione-nera tono-scuro" id="le-voci" aria-labelledby="titolo-voci">
+    <div class="sezione-testa">
+      <h2 id="titolo-voci" class="titolo-sezione titolo-xl">Le <span class="segnata segnata-sotto">voci<img class="pennellata dipingi" src="assets/loghi/unhate-pennellata.svg" alt="" aria-hidden="true"></span></h2>
+      <p class="intro-sezione">Prima degli strumenti, ascoltiamo loro. Queste sono frasi vere, dette da ragazze e ragazzi nelle interviste di <a href="#i-dati">Unfiltered</a>, la nostra ricerca annuale su come si cresce oggi tra i 13 e i 24 anni.</p>
+    </div>
+
+    <div class="voci" role="region" aria-roledescription="carosello" aria-label="Le voci dei ragazzi">
+      <div class="voci-traccia" tabindex="0" aria-label="Frasi dei ragazzi, scorri in orizzontale">
+        <figure class="voce c-verde lunga-m" role="group" aria-roledescription="frase" aria-label="1 di 10">
+          <blockquote><p>“Stiamo insieme per non stare soli ma alla fine non ci diciamo niente davvero.”</p></blockquote>
+          <figcaption><span>Dalle interviste di Unfiltered</span><span class="voce-num" aria-hidden="true">1/10</span></figcaption>
+        </figure>
+        <figure class="voce c-giallo lunga-s" role="group" aria-roledescription="frase" aria-label="2 di 10">
+          <blockquote><p>“Mi sento male quando gli altri non mi capiscono.”</p></blockquote>
+          <figcaption><span>Dalle interviste di Unfiltered</span><span class="voce-num" aria-hidden="true">2/10</span></figcaption>
+        </figure>
+        <figure class="voce c-rosa lunga-s" role="group" aria-roledescription="frase" aria-label="3 di 10">
+          <blockquote><p>“Mi sento bene quando mi sento nelle mie scarpe.”</p></blockquote>
+          <figcaption><span>Dalle interviste di Unfiltered</span><span class="voce-num" aria-hidden="true">3/10</span></figcaption>
+        </figure>
+        <figure class="voce c-bianco lunga-l" role="group" aria-roledescription="frase" aria-label="4 di 10">
+          <blockquote><p>“Mi sento male quando vengo giudicata perché non ho raggiunto quello che avrei dovuto alla mia età.”</p></blockquote>
+          <figcaption><span>Dalle interviste di Unfiltered</span><span class="voce-num" aria-hidden="true">4/10</span></figcaption>
+        </figure>
+        <figure class="voce c-verde lunga-m" role="group" aria-roledescription="frase" aria-label="5 di 10">
+          <blockquote><p>“Abbiamo il dono della parola, ma non sappiamo usare le parole.”</p></blockquote>
+          <figcaption><span>Dalle interviste di Unfiltered</span><span class="voce-num" aria-hidden="true">5/10</span></figcaption>
+        </figure>
+        <figure class="voce c-giallo lunga-m" role="group" aria-roledescription="frase" aria-label="6 di 10">
+          <blockquote><p>“Un tempo mi fidavo ciecamente dei miei genitori… ora non mi fido veramente di nessuno.”</p></blockquote>
+          <figcaption><span>Dalle interviste di Unfiltered</span><span class="voce-num" aria-hidden="true">6/10</span></figcaption>
+        </figure>
+        <figure class="voce c-rosa lunga-l" role="group" aria-roledescription="frase" aria-label="7 di 10">
+          <blockquote><p>“Mi sento capita quando c’è davanti a me una persona che mi sta davvero dedicando del tempo senza fretta. […] Quelle persone che ti fanno respirare.”</p></blockquote>
+          <figcaption><span>Dalle interviste di Unfiltered</span><span class="voce-num" aria-hidden="true">7/10</span></figcaption>
+        </figure>
+        <figure class="voce c-bianco lunga-m" role="group" aria-roledescription="frase" aria-label="8 di 10">
+          <blockquote><p>“Devi fare sempre di più, essere sempre sul pezzo. Ma poi cosa rimane?”</p></blockquote>
+          <figcaption><span>Dalle interviste di Unfiltered</span><span class="voce-num" aria-hidden="true">8/10</span></figcaption>
+        </figure>
+        <figure class="voce c-verde lunga-s" role="group" aria-roledescription="frase" aria-label="9 di 10">
+          <blockquote><p>“Non puoi darti il senso da sola, servono sempre gli altri.”</p></blockquote>
+          <figcaption><span>Dalle interviste di Unfiltered</span><span class="voce-num" aria-hidden="true">9/10</span></figcaption>
+        </figure>
+        <figure class="voce c-giallo lunga-m" role="group" aria-roledescription="frase" aria-label="10 di 10">
+          <blockquote><p>“Mi sento bene quando ho qualche secondo in più per pensare a quello che sta succedendo.”</p></blockquote>
+          <figcaption><span>Dalle interviste di Unfiltered</span><span class="voce-num" aria-hidden="true">10/10</span></figcaption>
+        </figure>
+        <div class="voce voce-fine" role="group" aria-roledescription="frase" aria-label="Fine delle frasi">
+          <p class="voce-fine-testo">Ascoltarli è il primo passo. Ecco da dove iniziare.</p>
+          <a class="btn btn-verde btn-grande" href="#capire">Capire <svg class="ico" aria-hidden="true"><use href="assets/icone.svg#arrow-right"/></svg></a>
+        </div>
+      </div>
+
+      <div class="voci-comandi">
+        <button class="btn-tondo" type="button" data-voci="prec" aria-label="Frase precedente"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-left"/></svg></button>
+        <div class="voci-avanzamento" aria-hidden="true"><span></span></div>
+        <button class="btn-tondo" type="button" data-voci="succ" aria-label="Frase successiva"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-right"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CAPIRE ============ -->
+  <section class="sezione sezione-chiara sezione-con-ponte" id="capire" aria-labelledby="titolo-capire">
+    <div class="sezione-testa">
+      <h2 id="titolo-capire" class="titolo-sezione">Capire</h2>
+      <p class="intro-sezione">Un figlio o una figlia adolescente cambia umore, a volte si chiude. Quasi sempre è crescita, a volte chiede più attenzione. Questa sezione ti aiuta a distinguere, un tema alla volta. Non serve a fare diagnosi: serve a notare che qualcosa sta cambiando e a decidere se parlarne con qualcuno.</p>
+      <p class="lettura"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#clock"/></svg><em>Lettura: 5 minuti</em></p>
+    </div>
+
+    <div class="sezione-corpo">
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">1</span>Prima di tutto: l’adolescenza è un passaggio</h3>
+        <p class="testo">Il corpo cambia in fretta e la mente deve lasciare il mondo rassicurante dell’infanzia per costruirsi un’identità propria. È come un trapezista che ha lasciato il primo trapezio e non ha ancora afferrato il secondo. La parola “crisi” viene dal greco <em>krisis</em>: un passaggio, con un prima e un dopo. Tutti i ragazzi lo attraversano, e solo una parte sta davvero male. Tu conosci tuo figlio meglio di chiunque: fidati delle tue sensazioni, sono una buona bussola.</p>
+
+        <div class="riquadro c-verde">
+          <h4 class="riquadro-titolo">Fa parte della crescita</h4>
+          <ul class="elenco">
+            <li>incertezze, piccole ansie o momenti di tristezza</li>
+            <li>sbalzi d’umore e reazioni d’impulso</li>
+            <li>un calo dei voti dopo una delusione</li>
+            <li>litigi per affermare la propria libertà</li>
+            <li>mode nel vestire che agli adulti sembrano assurde</li>
+          </ul>
+          <p class="riquadro-nota"><em>A una condizione: che non ci sia il desiderio di fare del male a sé o agli altri.</em></p>
+        </div>
+      </div>
+
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">2</span>Come distinguere: quattro domande</h3>
+        <div class="domande mini-carosello" role="region" aria-roledescription="carosello" aria-label="Quattro domande per distinguere">
+          <ul class="domande-traccia mini-traccia" tabindex="0" aria-label="Quattro domande, scorri in orizzontale">
+          <li class="domanda mini-card" role="group" aria-roledescription="domanda" aria-label="1 di 4">
+            <h4 class="domanda-titolo">Quanto è intensa?</h4>
+            <p>Una reazione molto più forte di ciò che l’ha provocata merita attenzione.</p>
+            <p class="domanda-num mini-num" aria-hidden="true">1/4</p>
+          </li>
+          <li class="domanda mini-card" role="group" aria-roledescription="domanda" aria-label="2 di 4">
+            <h4 class="domanda-titolo">Quanto spesso succede?</h4>
+            <p>Un episodio isolato pesa meno di uno che torna.</p>
+            <p class="domanda-num mini-num" aria-hidden="true">2/4</p>
+          </li>
+          <li class="domanda mini-card" role="group" aria-roledescription="domanda" aria-label="3 di 4">
+            <h4 class="domanda-titolo">Quanto dura?</h4>
+            <p>Un cambiamento passeggero, legato a un fatto preciso, è diverso da uno che si prolunga.</p>
+            <p class="domanda-num mini-num" aria-hidden="true">3/4</p>
+          </li>
+          <li class="domanda mini-card" role="group" aria-roledescription="domanda" aria-label="4 di 4">
+            <h4 class="domanda-titolo">Quanto pesa sulla vita di ogni giorno?</h4>
+            <p>Scuola, sonno, amici, cura di sé: quando cambiano, il segnale conta di più.</p>
+            <p class="domanda-num mini-num" aria-hidden="true">4/4</p>
+          </li>
+          </ul>
+        </div>
+
+        <div class="evidenza c-giallo">
+          <p class="evidenza-titolo">“Non lo riconosco più.”</p>
+          <p>Un cambiamento improvviso, in poco tempo, è uno dei segnali più importanti. Così come un calo improvviso a scuola o nello sport, o l’abbandono di ciò che amava fare.</p>
+        </div>
+      </div>
+
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">3</span>Tema per tema</h3>
+        <div class="schede">
+          <div class="scheda">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="scheda-1" id="scheda-1-t">Umore e ansia<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="scheda-1" role="region" aria-labelledby="scheda-1-t">
+              <p><strong>Cosa potresti notare:</strong> è spesso giù, svogliato o irritabile; perde interesse per cose che prima amava; passa giornate in camera ed evita gli amici; dorme troppo o troppo poco; ha momenti di paura improvvisa con il cuore che batte forte, fiato corto, la sensazione di perdere il controllo.</p>
+              <p><strong>Quando fare più attenzione:</strong> quando dura settimane, porta all’isolamento o rende impossibile studiare. Negli adolescenti la tristezza a volte si vede come rabbia o nervosismo.</p>
+              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
+            </div>
+          </div>
+          <div class="scheda">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="scheda-2" id="scheda-2-t">Corpo e immagine<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="scheda-2" role="region" aria-labelledby="scheda-2-t">
+              <p><strong>Cosa potresti notare:</strong> toglie un cibo dopo l’altro, non vuole mangiare con gli altri, è molto preoccupato per il proprio corpo; controlla di continuo lo specchio o lo evita del tutto; nasconde un presunto difetto; evita uscite per non farsi vedere.</p>
+              <p><strong>Quando fare più attenzione:</strong> quando diventa un pensiero fisso che toglie spazio alla vita sociale. Scegliere uno stile alimentare, per esempio vegetariano, non è di per sé un segnale.</p>
+              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
+            </div>
+          </div>
+          <div class="scheda">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="scheda-3" id="scheda-3-t">Scuola e relazioni<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="scheda-3" role="region" aria-labelledby="scheda-3-t">
+              <p><strong>Cosa potresti notare:</strong> paura o resistenza ad andare a scuola; “tutto bene” detto sempre, ma racconta poco; mal di pancia o di testa senza una causa chiara; oggetti rovinati o spariti senza spiegazione; escluso dalle chat o dalle feste di classe. Oppure, al contrario: aggressività, prepotenza, esplosioni di rabbia sproporzionate.</p>
+              <p><strong>Quando fare più attenzione:</strong> quando gli episodi si ripetono. Chi subisce spesso tace per paura; chi fa prepotenze sta comunque esprimendo un disagio.</p>
+              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
+            </div>
+          </div>
+          <div class="scheda">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="scheda-4" id="scheda-4-t">Schermi, gioco e sostanze<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="scheda-4" role="region" aria-labelledby="scheda-4-t">
+              <p><strong>Cosa potresti notare:</strong> non riesce a staccarsi dal gioco o dal telefono anche quando ne soffrono sonno e studio; si sveglia di notte per le notifiche; è molto irritabile quando deve smettere; cambia peso, appetito o sonno all’improvviso; si allontana dalla scuola e dagli amici.</p>
+              <p><strong>Quando fare più attenzione:</strong> molte ore online non significano per forza un problema. Conta come le passa: se condivide e si diverte, o se si perde e sposta lì tutte le relazioni.</p>
+              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">4</span>Tre cose da ricordare</h3>
+        <ol class="ricorda">
+          <li class="c-rosa"><p><strong>Nel dubbio, non aspettare.</strong> Un problema serio non si risolve da solo. Se è un falso allarme, aver chiesto un parere non fa danni.</p></li>
+          <li class="c-giallo"><p><strong>Lascia andare il senso di colpa.</strong> Chiedere aiuto non significa aver sbagliato. Quello che si è perso si può recuperare, e a volte basta cambiare qualcosa in famiglia.</p></li>
+          <li class="c-verde"><p><strong>Costruisci un’alleanza con la scuola</strong>, centrata sul benessere di tuo figlio, senza cercare colpevoli.</p></li>
+        </ol>
+      </div>
+
+      <p class="riga-118">Se c’è un pericolo immediato, per esempio minaccia di farsi del male o si è fatto male, <a href="tel:118" data-servizio="118">chiama il 118</a>.</p>
+      <p class="riga-fonti">I contenuti di questa sezione si basano sulla collana Bios Psychè Adolescenza (L’Asino d’oro edizioni) e sono stati rivisti da professionisti della salute mentale.</p>
+    </div>
+
+    <div class="ponte c-verde">
+      <div class="ponte-interno">
+        <p class="ponte-testo">Hai notato qualcosa?<br>Il passo successivo è parlarne.</p>
+        <a class="btn btn-nero btn-grande" href="#parlarne">Parlarne <svg class="ico" aria-hidden="true"><use href="assets/icone.svg#arrow-right"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PAUSA FOTOGRAFICA 2 ============ -->
+  <figure class="pausa pausa-quadrata tono-scuro">
+    <picture>
+      <source type="image/avif" srcset="assets/img/scena-cerchio-480.avif 480w, assets/img/scena-cerchio-800.avif 800w, assets/img/scena-cerchio-1200.avif 1200w" sizes="100vw">
+      <source type="image/webp" srcset="assets/img/scena-cerchio-480.webp 480w, assets/img/scena-cerchio-800.webp 800w, assets/img/scena-cerchio-1200.webp 1200w" sizes="100vw">
+      <img src="assets/img/scena-cerchio-800.jpg" srcset="assets/img/scena-cerchio-480.jpg 480w, assets/img/scena-cerchio-800.jpg 800w, assets/img/scena-cerchio-1200.jpg 1200w" sizes="100vw" width="1200" height="1200" loading="lazy" decoding="async" alt="Foto di scena di Chi come me: ragazze e ragazzi seduti in cerchio su sedie di legno; uno di loro, in piedi, porta una corona di carta.">
+    </picture>
+  </figure>
+
+  <!-- ============ PARLARNE ============ -->
+  <section class="sezione sezione-chiara" id="parlarne" aria-labelledby="titolo-parlarne">
+    <div class="sezione-testa">
+      <h2 id="titolo-parlarne" class="titolo-sezione">Parlarne</h2>
+      <p class="intro-sezione">Iniziare una conversazione non vuol dire parlare subito di malessere o affrontare un confronto a cuore aperto. Non serve la frase perfetta. Spesso basta far capire che ci sei, e che hai voglia di ascoltare. Qui trovi qualche frase per cominciare, idee sul momento giusto e cosa fare mentre parlate.</p>
+      <p class="lettura"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#clock"/></svg><em>Lettura: 3 minuti</em></p>
+    </div>
+
+    <div class="sezione-corpo">
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">1</span>Per iniziare: basta aprire una porta</h3>
+        <p class="testo">Iniziare significa far sapere a tuo figlio, o ai ragazzi con cui lavori, che hai notato qualcosa e che sei disponibile. Se ora non vogliono parlare, va bene lo stesso: la porta resta aperta. Prova una di queste frasi, o usala come spunto per trovare le tue parole.</p>
+
+        <div class="frasi" data-frasi>
+          <ol class="frasi-elenco" aria-live="polite">
+            <li>“Ti vedo un po’ pensieroso in questi giorni. Ti va di raccontarmi?”</li>
+            <li>“Non devi spiegarmi niente adesso. Volevo solo dirti che ci sono.”</li>
+            <li>“È da un po’ che non chiacchieriamo noi due. Come stai, davvero?”</li>
+            <li>“Mi sembra che qualcosa ti pesi. Se vuoi parlarne, io ascolto.”</li>
+            <li>“Oggi sembravi arrabbiato. Vuoi che ne parliamo o preferisci stare un po’ per conto tuo?”</li>
+            <li>“Non ti sento ridere da un po’. Va tutto bene?”</li>
+            <li>“Puoi dirmi qualsiasi cosa. Non mi arrabbio e non ti giudico.”</li>
+            <li>“Anch’io alla tua età avevo giornate storte. Com’è andata la tua?”</li>
+            <li>“Ho notato che esci meno con i tuoi amici. Ti va di dirmi come mai?”</li>
+            <li>“È un po’ imbarazzante chiedertelo, ma ci tengo: come ti senti in questo periodo?”</li>
+            <li>“Se c’è qualcosa che ti preoccupa, anche una piccola cosa, mi piacerebbe saperlo.”</li>
+            <li>“Quando avrai voglia di parlare, io ci sarò.”</li>
+          </ol>
+          <div class="frasi-piede">
+            <span class="frasi-num" aria-hidden="true"></span>
+            <button type="button" class="btn btn-nero btn-grande frasi-btn" hidden><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#arrows-clockwise"/></svg>Mostrami un’altra frase</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">2</span>Trova il momento giusto</h3>
+        <p class="testo">Molti ragazzi si aprono più facilmente quando non si sentono sotto i riflettori. Le conversazioni importanti nascono spesso mentre si fa altro, fianco a fianco, senza doversi guardare negli occhi. Un buon momento è quello in cui tutti e due siete tranquilli e non avete fretta.</p>
+        <ul class="momenti">
+          <li class="momento"><svg class="ico momento-ico" aria-hidden="true"><use href="assets/icone.svg#car"/></svg><h4 class="momento-titolo">In macchina</h4><p>Seduti uno accanto all’altro, con la strada davanti: parlare viene più naturale.</p></li>
+          <li class="momento"><svg class="ico momento-ico" aria-hidden="true"><use href="assets/icone.svg#cooking-pot"/></svg><h4 class="momento-titolo">Mentre cucinate insieme</h4><p>Le mani occupate aiutano ad abbassare la tensione.</p></li>
+          <li class="momento"><svg class="ico momento-ico" aria-hidden="true"><use href="assets/icone.svg#dog"/></svg><h4 class="momento-titolo">Durante una passeggiata</h4><p>Anche dieci minuti, magari portando fuori il cane.</p></li>
+          <li class="momento"><svg class="ico momento-ico" aria-hidden="true"><use href="assets/icone.svg#chat-circle-dots"/></svg><h4 class="momento-titolo">Con un messaggio</h4><p>A volte è più facile scrivere che parlare. Un “come va?” può aprire una conversazione da continuare di persona.</p></li>
+          <li class="momento"><svg class="ico momento-ico" aria-hidden="true"><use href="assets/icone.svg#game-controller"/></svg><h4 class="momento-titolo">Facendo qualcosa che piace a lui o a lei</h4><p>Una serie, un videogioco, una partita: entra nel suo mondo prima di fare domande.</p></li>
+          <li class="momento"><svg class="ico momento-ico" aria-hidden="true"><use href="assets/icone.svg#moon-stars"/></svg><h4 class="momento-titolo">Prima di dormire</h4><p>La sera, con la luce bassa, molti ragazzi si raccontano di più.</p></li>
+        </ul>
+      </div>
+
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">3</span>Mentre parlate</h3>
+        <p class="testo">Quando la conversazione parte, la cosa più utile è ascoltare. Non devi avere tutte le risposte: spesso un ragazzo ha solo bisogno di sentirsi ascoltato prima ancora che capito.</p>
+        <div class="schede schede-piccole">
+          <div class="scheda">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="scheda-5" id="scheda-5-t">Ascolta più di quanto parli<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="scheda-5" role="region" aria-labelledby="scheda-5-t">
+              <p>Lascia spazio ai suoi tempi, anche alle pause.</p>
+            </div>
+          </div>
+          <div class="scheda">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="scheda-6" id="scheda-6-t">Non cercare subito una soluzione<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="scheda-6" role="region" aria-labelledby="scheda-6-t">
+              <p>Prima di consigliare, chiedi: “Vuoi un consiglio o vuoi solo che ti ascolti?”</p>
+            </div>
+          </div>
+          <div class="scheda">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="scheda-7" id="scheda-7-t">Prendi sul serio quello che dice<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="scheda-7" role="region" aria-labelledby="scheda-7-t">
+              <p>Anche se a te sembra una cosa piccola, per lui o per lei può essere grande.</p>
+            </div>
+          </div>
+          <div class="scheda">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="scheda-8" id="scheda-8-t">Fai domande aperte<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="scheda-8" role="region" aria-labelledby="scheda-8-t">
+              <p>“Come ti sei sentito?” apre di più di “Ti sei arrabbiato?”</p>
+            </div>
+          </div>
+          <div class="scheda">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="scheda-9" id="scheda-9-t">Ringrazia<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="scheda-9" role="region" aria-labelledby="scheda-9-t">
+              <p>“Grazie per avermelo detto” fa capire che parlare con te è stata una buona idea.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="evita">
+          <h4 class="evita-titolo">Meglio evitare</h4>
+          <div class="mini-carosello" role="region" aria-roledescription="carosello" aria-label="Meglio evitare: quattro esempi">
+            <ul class="mini-traccia" tabindex="0" aria-label="Quattro esempi, scorri in orizzontale">
+              <li class="evita-coppia mini-card" role="group" aria-roledescription="coppia" aria-label="1 di 4">
+                <div class="evita-no"><p class="evita-etichetta">Invece di…</p><p>“Alla tua età avevo problemi ben più seri.”</p></div>
+                <svg class="ico evita-freccia" aria-hidden="true"><use href="assets/icone.svg#arrow-right"/></svg>
+                <div class="evita-si"><p class="evita-etichetta">Prova con…</p><p>“Raccontami com’è per te.”</p></div>
+                <p class="mini-num evita-num" aria-hidden="true">1/4</p>
+              </li>
+              <li class="evita-coppia mini-card" role="group" aria-roledescription="coppia" aria-label="2 di 4">
+                <div class="evita-no"><p class="evita-etichetta">Invece di…</p><p>“Dai, non è niente, passerà.”</p></div>
+                <svg class="ico evita-freccia" aria-hidden="true"><use href="assets/icone.svg#arrow-right"/></svg>
+                <div class="evita-si"><p class="evita-etichetta">Prova con…</p><p>“Capisco che ti pesi. Parliamone.”</p></div>
+                <p class="mini-num evita-num" aria-hidden="true">2/4</p>
+              </li>
+              <li class="evita-coppia mini-card" role="group" aria-roledescription="coppia" aria-label="3 di 4">
+                <div class="evita-no"><p class="evita-etichetta">Invece di…</p><p>“Te l’avevo detto.”</p></div>
+                <svg class="ico evita-freccia" aria-hidden="true"><use href="assets/icone.svg#arrow-right"/></svg>
+                <div class="evita-si"><p class="evita-etichetta">Prova con…</p><p>“Cosa pensi che potremmo fare adesso?”</p></div>
+                <p class="mini-num evita-num" aria-hidden="true">3/4</p>
+              </li>
+              <li class="evita-coppia mini-card" role="group" aria-roledescription="coppia" aria-label="4 di 4">
+                <div class="evita-no"><p class="evita-etichetta">Invece di…</p><p>“Stai sempre attaccato al telefono, per forza stai così.”</p></div>
+                <svg class="ico evita-freccia" aria-hidden="true"><use href="assets/icone.svg#arrow-right"/></svg>
+                <div class="evita-si"><p class="evita-etichetta">Prova con…</p><p>“Com’è andata oggi, davvero?”</p></div>
+                <p class="mini-num evita-num" aria-hidden="true">4/4</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">4</span>Dopo la conversazione</h3>
+        <p class="testo">Una conversazione non deve risolvere tutto. Nei giorni successivi torna a chiedere come va, con leggerezza, senza insistere. Se quello che hai sentito ti preoccupa, o se il cambiamento dura nel tempo, non devi gestirlo da solo: ci sono persone e servizi che possono aiutare entrambi.</p>
+        <div class="coppia-pulsanti">
+          <a class="btn btn-nero btn-doppio" href="#capire"><span class="btn-riga1">Torna a Capire</span><span class="btn-riga2">per rileggere a cosa fare attenzione</span></a>
+          <a class="btn btn-verde btn-doppio" href="#a-chi-rivolgersi"><span class="btn-riga1">A chi rivolgerti</span><span class="btn-riga2">numeri e servizi</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ A CHI RIVOLGERSI ============ -->
+  <section class="sezione sezione-nera tono-scuro sezione-rubrica" id="a-chi-rivolgersi" aria-labelledby="titolo-rivolgersi">
+    <div class="sezione-testa">
+      <h2 id="titolo-rivolgersi" class="titolo-sezione">A chi rivolgersi</h2>
+      <p class="intro-sezione">Chiedere un parere non vuol dire che ci sia per forza un problema. A volte serve solo confrontarsi con qualcuno che conosce bene i ragazzi, per capire se quello che vediamo è normale o merita più attenzione. Qui trovi a chi rivolgerti, partendo dalle persone più vicine.</p>
+      <p class="lettura"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#clock"/></svg><em>Lettura: 2 minuti</em></p>
+    </div>
+
+    <div class="sezione-corpo">
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">1</span>Il primo passo: chi è già vicino a te</h3>
+        <ul class="rubrica">
+          <li class="contatto">
+            <h4 class="contatto-nome">Il pediatra o il medico di base</h4>
+            <p class="contatto-desc">Conosce tuo figlio e la sua storia. Può darti un primo parere e, se serve, indirizzarti ai servizi giusti.</p>
+          </li>
+          <li class="contatto">
+            <h4 class="contatto-nome">Lo sportello d’ascolto della scuola</h4>
+            <p class="contatto-desc">Molte scuole hanno uno psicologo a disposizione di studenti, insegnanti e genitori. Per accedere basta chiedere alla segreteria.</p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">2</span>Per parlare con qualcuno, gratis</h3>
+        <ul class="rubrica">
+          <li class="contatto">
+            <h4 class="contatto-nome">Telefono Azzurro</h4>
+            <p class="contatto-desc">Per bambini, ragazzi e adulti preoccupati per loro<br>24 ore su 24, tutti i giorni</p>
+            <div class="contatto-azioni">
+              <a class="btn btn-chiama" href="tel:19696" data-servizio="Telefono Azzurro"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#phone"/></svg>Chiama 19696</a>
+              <a class="btn btn-contorno" href="https://www.azzurro.it" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#chat-circle-dots"/></svg>Chatta</a>
+            </div>
+          </li>
+          <li class="contatto">
+            <h4 class="contatto-nome">Telefono Amico Italia</h4>
+            <p class="contatto-desc">Per chiunque abbia bisogno di parlare<br>Telefono 24 ore su 24 · WhatsApp 18–21</p>
+            <div class="contatto-azioni">
+              <a class="btn btn-chiama" href="tel:+390223272327" data-servizio="Telefono Amico Italia"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#phone"/></svg>Chiama 02 2327 2327</a>
+              <a class="btn btn-contorno" href="https://wa.me/393240117252" target="_blank" rel="noopener" data-servizio="Telefono Amico Italia WhatsApp"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#whatsapp-logo"/></svg>WhatsApp</a>
+            </div>
+          </li>
+        </ul>
+        <p class="nota-verifica">Numeri verificati a novembre 2026 sui siti di <a href="https://www.azzurro.it" target="_blank" rel="noopener">Telefono Azzurro</a> e <a href="https://www.telefonoamico.it" target="_blank" rel="noopener">Telefono Amico</a></p>
+      </div>
+
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">3</span>I servizi pubblici in Lombardia</h3>
+        <p class="testo">Se il pediatra o il medico lo consigliano, o se il cambiamento dura nel tempo, ci sono servizi pubblici pensati proprio per bambini e ragazzi. Si paga solo il ticket, se non si è esenti.</p>
+        <ul class="rubrica">
+          <li class="contatto">
+            <h4 class="contatto-nome">Consultori familiari</h4>
+            <p class="contatto-desc">Psicologi e altri professionisti che seguono persone, coppie e famiglie.</p>
+            <a class="contatto-link" href="https://www.dati.lombardia.it/Sanit-/Mappa-elenco-consultori-pubblici/3yn6-uqk7" target="_blank" rel="noopener">Trova il consultorio più vicino<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#arrow-up-right"/></svg></a>
+          </li>
+          <li class="contatto">
+            <h4 class="contatto-nome">Neuropsichiatria dell’infanzia e dell’adolescenza (NPIA)</h4>
+            <p class="contatto-desc">Il servizio pubblico dedicato ai minori da 0 a 18 anni, attivo presso le ASST. Si accede ai poli territoriali della propria zona.</p>
+            <a class="contatto-link" href="https://www.regione.lombardia.it/wps/portal/istituzionale/HP/DettaglioRedazionale/servizi-e-informazioni/cittadini/salute-e-prevenzione/Cure-specialistiche-e-consultori/tutela-salute-mentale/tutela-salute-mentale" target="_blank" rel="noopener">Informazioni su Regione Lombardia<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#arrow-up-right"/></svg></a>
+          </li>
+          <li class="contatto">
+            <h4 class="contatto-nome">PsyMap</h4>
+            <p class="contatto-desc">Il motore di ricerca dell’Ordine degli Psicologi della Lombardia: inserisci l’indirizzo e trovi prima i servizi pubblici vicini, poi i professionisti.</p>
+            <a class="contatto-link" href="https://www.psymap.it" target="_blank" rel="noopener">Cerca su psymap.it<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#arrow-up-right"/></svg></a>
+          </li>
+        </ul>
+      </div>
+
+      <p class="riga-118">Se c’è un pericolo immediato, <a href="tel:118" data-servizio="118">chiama il 118</a>.</p>
+    </div>
+  </section>
+
+<!-- ============ I DATI ============ -->
+  <section class="sezione sezione-chiara" id="i-dati" aria-labelledby="titolo-dati">
+    <div class="sezione-testa">
+      <h2 id="titolo-dati" class="titolo-sezione">I dati</h2>
+      <p class="intro-sezione">Unfiltered è il nostro osservatorio sui ragazzi tra i 13 e i 24 anni: una ricerca che parte dalle loro voci per capire cosa significa crescere oggi. Qui trovi cinque cose che abbiamo imparato, e cosa possono voler dire per te.</p>
+      <p class="lettura"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#clock"/></svg><em>Lettura: 2 minuti</em></p>
+    </div>
+
+    <div class="sezione-corpo">
+      <ol class="dati">
+        <li class="dato c-verde">
+          <div class="dato-testa"><span class="dato-num" aria-hidden="true">01</span></div>
+          <h3 class="dato-titolo">La fragilità nasce nelle relazioni.</h3>
+          <p>Non dipende da “come sono fatti” i ragazzi, ma dalle relazioni e dai contesti in cui crescono. Quando mancano continuità e punti di riferimento, è più facile bloccarsi.</p>
+          <p class="dato-te"><span class="dato-te-etichetta">Cosa significa per te:</span> esserci con costanza conta più di qualsiasi consiglio perfetto.</p>
+        </li>
+        <li class="dato c-giallo">
+          <div class="dato-testa"><span class="dato-num" aria-hidden="true">02</span></div>
+          <h3 class="dato-titolo">Tante possibilità, poco orientamento.</h3>
+          <p>Avere il mondo aperto non basta: senza qualcuno che accompagna, l’incertezza diventa pressione e fatica a scegliere.</p>
+          <p class="dato-te"><span class="dato-te-etichetta">Cosa significa per te:</span> aiutare a scegliere vuol dire accompagnare nel tempo, non dare tutte le risposte in una volta.</p>
+        </li>
+        <li class="dato c-rosa">
+          <div class="dato-testa"><span class="dato-num" aria-hidden="true">03</span></div>
+          <h3 class="dato-titolo">I passaggi sono i momenti più delicati.</h3>
+          <p>Il cambio di scuola, o il passaggio dalla scuola al lavoro, concentrano molte fatiche, soprattutto quando si perdono i riferimenti di prima.</p>
+          <p class="dato-te"><span class="dato-te-etichetta">Cosa significa per te:</span> nei mesi di passaggio, una presenza in più fa la differenza.</p>
+        </li>
+        <li class="dato c-bianco">
+          <div class="dato-testa"><span class="dato-num" aria-hidden="true">04</span></div>
+          <h3 class="dato-titolo">Il benessere psicologico riguarda tanti ragazzi.</h3>
+          <p>Ansia, stanchezza, sentirsi inadeguati non sono casi isolati, ma segnali diffusi.</p>
+          <p class="dato-te"><span class="dato-te-etichetta">Cosa significa per te:</span> se li noti, non sei l’unico e non è una colpa. Parlarne è il primo passo.</p>
+        </li>
+        <li class="dato c-verde">
+          <div class="dato-testa"><span class="dato-num" aria-hidden="true">05</span></div>
+          <h3 class="dato-titolo">I ragazzi chiedono di contare.</h3>
+          <p>Non vogliono solo essere ascoltati, ma avere spazi in cui decidere e fare. Quando succede, la fragilità può diventare energia.</p>
+          <p class="dato-te"><span class="dato-te-etichetta">Cosa significa per te:</span> chiedi la loro opinione e lascia spazio alle loro scelte.</p>
+        </li>
+      </ol>
+      <a class="btn btn-nero btn-grande" href="https://www.unhatefoundation.org/it/unfiltered" target="_blank" rel="noopener" data-traccia="download_report"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#download-simple"/></svg>Scarica il report Unfiltered</a>
+    </div>
+  </section>
+
+  <!-- ============ PER LA SCUOLA ============ -->
+  <section class="sezione sezione-rosa" id="per-la-scuola" aria-labelledby="titolo-scuola">
+    <div class="sezione-testa">
+      <h2 id="titolo-scuola" class="titolo-sezione">Per la scuola</h2>
+      <p class="intro-sezione">Lavori con gli adolescenti a scuola, nello sport o in altri contesti educativi? Insieme a Fondazione Poetica abbiamo preparato un toolkit con pratiche semplici, nate dall’ascolto dei ragazzi di Unfiltered, da usare con il tuo gruppo.</p>
+      <a class="btn btn-nero btn-grande" href="https://sites.google.com/view/unhatefoundation-toolkit/homepage" target="_blank" rel="noopener" data-traccia="click_toolkit"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#graduation-cap"/></svg>Scopri il toolkit</a>
+    </div>
+  </section>
+
+  <!-- ============ PER APPROFONDIRE ============ -->
+  <section class="sezione sezione-chiara" id="per-approfondire" aria-labelledby="titolo-approfondire">
+    <div class="sezione-testa">
+      <h2 id="titolo-approfondire" class="titolo-sezione">Per approfondire</h2>
+      <p class="intro-sezione intro-etichetta"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#books"/></svg>Libri, film e serie</p>
+    </div>
+
+    <div class="sezione-corpo">
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione">I libri della collana dell’Asino d’oro</h3>
+        <p class="testo">I contenuti della sezione Capire vengono dai volumi della collana Bios Psychè Adolescenza, pubblicata da L’Asino d’oro edizioni. Ogni volume approfondisce un tema. Sono scritti da psichiatre, psichiatri, psicologhe, psicologi e psicoterapeuti e sono un buon punto di partenza per chi vuole approfondire.</p>
+        <div class="schede schede-piccole">
+          <div class="scheda">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="collana-libri" id="collana-libri-t">Vedi i 9 libri della collana<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="collana-libri" role="region" aria-labelledby="collana-libri-t">
+            <ol class="collana">
+              <li><span class="collana-num" aria-hidden="true">1</span><p class="collana-titolo">Anoressia</p><p class="collana-sotto">Le patologie del comportamento alimentare</p><p class="collana-autori">Ludovica Costantino, Luca Giorgini, Manuela Petrucci</p></li>
+              <li><span class="collana-num" aria-hidden="true">2</span><p class="collana-titolo">Dismorfofobia</p><p class="collana-sotto">Quando vedersi brutti è patologia</p><p class="collana-autori">Donatella De Lisi, Eva Gebhardt, Luca Giorgini, Andrea Raballo</p></li>
+              <li><span class="collana-num" aria-hidden="true">3</span><p class="collana-titolo">Attacchi di panico</p><p class="collana-sotto">Il corpo che grida</p><p class="collana-autori">Claudia Dario, Riccardo Saba, Luana Testa</p></li>
+              <li><span class="collana-num" aria-hidden="true">4</span><p class="collana-titolo">Depressione</p><p class="collana-sotto">Quando non è solo tristezza</p><p class="collana-autori">Cecilia Di Agostino, Marzia Fabi, Maria Sneider</p></li>
+              <li><span class="collana-num" aria-hidden="true">5</span><p class="collana-titolo">Adolescenti nella rete</p><p class="collana-sotto">Quando il web diventa una trappola</p><p class="collana-autori">Assunta Amendola, Beniamino Gigli, Alessandra Maria Monti</p></li>
+              <li><span class="collana-num" aria-hidden="true">6</span><p class="collana-titolo">Dipendenza da sostanze</p><p class="collana-sotto">Un mondo senza sogni</p><p class="collana-autori">Cinzia Fazio, Silvia Leonardelli, Emanuela Lucarini, Niccolò Trevisan</p></li>
+              <li><span class="collana-num" aria-hidden="true">7</span><p class="collana-titolo">Il bullismo</p><p class="collana-sotto">È o non è cattiveria?</p><p class="collana-autori">Marzia Fabi, Nella Lo Cascio, Fiorella Quaranta, Eleonora Serale</p></li>
+              <li><span class="collana-num" aria-hidden="true">8</span><p class="collana-titolo">Gaming patologico</p><p class="collana-sotto">Quando il gioco diventa pericoloso</p><p class="collana-autori">Emanuela Atzori, Dori Montanaro, Marinica Montanaro, Ilario Ritacco</p></li>
+              <li><span class="collana-num" aria-hidden="true">9</span><p class="collana-titolo">Giovani autori di reato</p><p class="collana-sotto">Delinquenti non si nasce</p><p class="collana-autori">Laura Castaldo, Pieritalo Pompili, Ilaria Usai</p></li>
+            </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="blocco">
+        <h3 class="sottotitolo-sezione">Altri libri, film, documentari e serie</h3>
+        <p class="testo">A volte le storie aiutano a capire meglio un problema, e possono diventare una base comune da cui partire per parlarne. Qui sotto ce ne sono alcune da leggere o da guardare, anche insieme a un figlio o a una figlia. Se vuoi proporne una a tuo figlio o a tua figlia, prima guardala o leggila tu.</p>
+
+        <div class="schede schede-piccole temi">
+          <div class="scheda tema" data-tema="bullismo">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="tema-bullismo" id="tema-bullismo-t" data-tema-nome="Bullismo">Bullismo (9)<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="tema-bullismo" role="region" aria-labelledby="tema-bullismo-t">
+              <ul class="opere-elenco">
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-1"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Wonder</span><span class="opera-meta">Stephen Chbosky, 2017, dal libro di R.J. Palacio</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-1"><p>Un bambino con il volto diverso dagli altri entra per la prima volta in una scuola e deve fare i conti con l’esclusione dei compagni. Col tempo si guadagna il loro affetto. <strong>Perché vederlo:</strong> fa capire cosa si prova a essere esclusi per il proprio aspetto e apre il discorso sulla diversità.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-2"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">La forma della voce (A Silent Voice)</span><span class="opera-meta">Naoko Yamada, Giappone 2016 (animazione)</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-2"><p>Da bambino Shoya ha preso di mira una compagna sorda. Cresciuto, si sente solo e in colpa e cerca l’occasione per scusarsi. <strong>Perché vederlo:</strong> mostra il bullismo anche dalla parte di chi lo ha fatto e dei sensi di colpa che restano.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-3"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Un bacio</span><span class="opera-meta">Ivan Cotroneo, 2016</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-3"><p>Tre ragazzi bersaglio di pregiudizi e chiacchiere a scuola stringono amicizia e si sostengono a vicenda. <strong>Perché vederlo:</strong> mostra come l’amicizia può essere una risposta ai pregiudizi.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-4"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Bene ma non benissimo</span><span class="opera-meta">Francesco Mandelli, Italia 2018</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-4"><p>Candida viene derisa per il corpo e per la sua inflessione dialettale. Risponde agli insulti e prende le difese di un nuovo amico, Jacopo. <strong>Perché vederlo:</strong> mostra una ragazza che reagisce alle offese e difende un altro.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-5"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Jimmy Grimble</span><span class="opera-meta">John Hay, 2001</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-5"><p>Jimmy, 15 anni, è bravissimo a calcio ma si blocca quando si sente osservato. A scuola un gruppo guidato da Gordon Burley lo prende in giro e lo picchia. <strong>Perché vederlo:</strong> mostra cosa provoca il bullismo in un ragazzo insicuro.</p></div>
+                </li>
+                <li class="opera" data-tipo="libro">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-6"><span class="opera-etichette"><span class="opera-tipo">Libro · Romanzo</span></span><span class="opera-titolo">Per questo mi chiamo Giovanni</span><span class="opera-meta">Luigi Garlando, Rizzoli, Milano 2019</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-6"><p>Un bambino di Palermo è minacciato da un compagno prepotente e non ne parla con nessuno. Il padre gli racconta la storia di Giovanni Falcone e di come si è opposto alle prepotenze. <strong>Perché leggerlo:</strong> spiega a un bambino perché non bisogna cedere ai soprusi.</p></div>
+                </li>
+                <li class="opera" data-tipo="libro">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-7"><span class="opera-etichette"><span class="opera-tipo">Libro · Romanzo</span></span><span class="opera-titolo">Camminare correre volare</span><span class="opera-meta">Sabrina Rondinelli, EL, Milano 2008</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-7"><p>Asja, 14 anni, si mostra spavalda ma nasconde una grande sofferenza, e prende di mira una compagna più fragile, Maria. <strong>Perché leggerlo:</strong> fa vedere cosa può stare dietro chi fa il bullo e cosa vive chi lo subisce.</p></div>
+                </li>
+                <li class="opera" data-tipo="libro">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-8"><span class="opera-etichette"><span class="opera-tipo">Libro · Romanzo</span></span><span class="opera-titolo">Bulle da morire</span><span class="opera-meta">Emanuela Da Ros, Feltrinelli, 2017</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-8"><p>Stefania e Giada, amiche da sempre, iniziano il liceo e incontrano due compagne popolari che escludono Giada perché timida, anche dalla chat di classe. Stefania, per farsi accettare, la lascia sola. <strong>Perché leggerlo:</strong> è raccontato dal punto di vista di chi assiste e sceglie se stare zitta, e mostra il coraggio di dire basta.</p></div>
+                </li>
+                <li class="opera" data-tipo="libro">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-9"><span class="opera-etichette"><span class="opera-tipo">Libro · Saggio</span></span><span class="opera-titolo">Cyberbullismo. Come aiutare le vittime e i persecutori</span><span class="opera-meta">Federico Tonioni, Mondadori, Milano 2014</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-9"><p>Saggio pensato per i genitori, ma utile anche a insegnanti e a chi lavora con bambini e adolescenti. Spiega come funziona il mondo della rete e che cos’è il cyberbullismo. <strong>Perché leggerlo:</strong> fa riflettere sul ruolo degli adulti.</p></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="scheda tema" data-tema="social">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="tema-social" id="tema-social-t" data-tema-nome="Social e rete">Social e rete (6)<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="tema-social" role="region" aria-labelledby="tema-social-t">
+              <ul class="opere-elenco">
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-10"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">The Social Network</span><span class="opera-meta">David Fincher, 2010</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-10"><p>Come nasce Facebook, visto dalla parte di Zuckerberg, all’epoca studente a Harvard. Alcuni colleghi lo accusano di aver preso la loro idea e lo portano in tribunale. <strong>Perché vederlo:</strong> fa capire da dove arriva uno dei social più usati.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-11"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Cyberbully. Pettegolezzi online</span><span class="opera-meta">Charles Binamé, Canada 2011</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-11"><p>Ragazzi che, protetti dall’anonimato online, danno sfogo a gelosie e rancori credendo di non pagarne il prezzo. La responsabile viene scoperta e poi subisce a sua volta bullismo. <strong>Perché vederlo:</strong> fa vedere cosa muove chi attacca online e che cosa ne consegue.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-12"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Avalon</span><span class="opera-meta">Mamoru Oshii, Giappone 2001</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-12"><p>Ash passa le giornate in un videogioco bellico e fuori dal gioco non ha rapporti con nessuno. A poco a poco non distingue più il reale dal virtuale. <strong>Perché vederlo:</strong> racconta l’immersione totale nel gioco e l’isolamento che può portare.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-13"><span class="opera-etichette"><span class="opera-tipo">Serie / TV</span></span><span class="opera-titolo">Black Mirror</span><span class="opera-meta">Regno Unito, dal 2011</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-13"><p>Serie di episodi indipendenti, ambientati nel futuro, che immaginano situazioni assurde nate dalle nuove tecnologie. <strong>Perché vederla:</strong> pone domande serie sul legame tra persone e macchine e fra i ragazzi ha successo.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-14"><span class="opera-etichette"><span class="opera-tipo">Documentario</span></span><span class="opera-titolo">Web Junkie. Drogati del web</span><span class="opera-meta">Hilla Medalia e Shosh Shlam, Cina 2013</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-14"><p>Documentario girato senza filtri nel centro di Daxing, vicino a Pechino, dove vengono curati ragazzi dai 13 ai 18 anni. Raccontano in prima persona la loro storia e le fasi del recupero. <strong>Perché vederlo:</strong> mostra dove può arrivare la dipendenza dal web.</p></div>
+                </li>
+                <li class="opera" data-tipo="libro">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-15"><span class="opera-etichette"><span class="opera-tipo">Libro · Saggio</span></span><span class="opera-titolo">iRules. Come educare figli iperconnessi</span><span class="opera-meta">Janell Burley Hofmann, Giunti, 2015</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-15"><p>L’autrice ha scritto un accordo da firmare con il figlio al momento di regalargli lo smartphone, e il testo è diventato molto noto in rete. <strong>Perché leggerlo:</strong> ricorda ai genitori di accompagnare i figli online come fanno nel resto della vita.</p></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="scheda tema" data-tema="videogiochi">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="tema-videogiochi" id="tema-videogiochi-t" data-tema-nome="Videogiochi">Videogiochi (5)<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="tema-videogiochi" role="region" aria-labelledby="tema-videogiochi-t">
+              <ul class="opere-elenco">
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-16"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Game Over</span><span class="opera-meta">Laura O’Grady, documentario, USA 2019</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-16"><p>Cam Adair racconta i dieci anni in cui è stato dipendente dai videogiochi: ha lasciato la scuola e la squadra di hockey, ha giocato fino a 16 ore filate e ha nascosto tutto ai genitori, finché ha chiesto aiuto. Oggi guida Game Quitters, che sostiene i giocatori in 95 paesi. <strong>Perché vederlo:</strong> racconta in breve e in prima persona come si cade nella dipendenza e come se ne esce.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-17"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">The Social Dilemma</span><span class="opera-meta">Jeff Orlowski, documentario, USA 2020</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-17"><p>Docu-film sui rischi di un uso poco critico dei social e della rete: utenti manipolati, dati personali raccolti e venduti, dipendenza, pressione sulle scelte politiche, complottismi. <strong>Perché vederlo:</strong> aiuta a capire come funzionano i social e cosa c’è dietro.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-18"><span class="opera-etichette"><span class="opera-tipo">Serie / TV</span></span><span class="opera-titolo">High Score</span><span class="opera-meta">France Costrel, serie documentaria Netflix, USA 2020</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-18"><p>Docu-serie Netflix sulla storia dei videogiochi, con immagini d’epoca e interviste a figure chiave come Nolan Bushnell (Atari) e Tomohiro Nishikado (Space Invaders). Segue le tappe in ordine di tempo e mostra anche l’impatto sulla cultura e sul costume. <strong>Perché vederla:</strong> fa capire da dove arrivano i videogiochi e cosa hanno significato per la cultura.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-19"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Ready Player One</span><span class="opera-meta">Steven Spielberg, USA 2018, dal romanzo di Ernest Cline</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-19"><p>In un futuro cupo, con gran parte della gente che vive in baraccopoli, OASIS è un gioco online che funziona da mondo parallelo. Il diciassettenne Wade Watts ci entra con il suo avatar per vincere la gara lasciata dal fondatore. Il film mostra con realismo cosa spinge a rifugiarsi nel gioco e come i due mondi si mescolino, anche con amicizie vere. <strong>Perché vederlo:</strong> dà un’idea realistica del mondo dei giochi online e delle ragioni per cui ci si entra.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-20"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Lei (Her)</span><span class="opera-meta">Spike Jonze, USA 2013</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-20"><p>Theodore, in crisi dopo il divorzio, riempie il tempo con lavoro, videogiochi e chat. Poi installa un sistema operativo con intelligenza artificiale, Samantha, e finisce per credere di amarla. Intanto evita le relazioni con persone reali. <strong>Perché vederlo:</strong> mostra come il legame con una macchina può prendere il posto delle relazioni reali.</p></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="scheda tema" data-tema="sostanze">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="tema-sostanze" id="tema-sostanze-t" data-tema-nome="Sostanze">Sostanze (5)<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="tema-sostanze" role="region" aria-labelledby="tema-sostanze-t">
+              <ul class="opere-elenco">
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-21"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Radiofreccia</span><span class="opera-meta">Luciano Ligabue, 1998</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-21"><p>Il deejay Bruno ripercorre la nascita di una radio libera con gli amici nel 1975 e la morte di Ivan, detto Freccia, per tossicodipendenza, che porta il gruppo a chiudere l’esperienza. <strong>Perché vederlo:</strong> mostra cosa lascia in un gruppo la perdita di un amico per la droga.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-22"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Scialla!</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-22"><p>Luca, sedici anni, rifiuta le sostanze. <strong>Perché vederlo:</strong> mostra un ragazzo che le sostanze le rifiuta.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-23"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Amy</span><span class="opera-meta">Asif Kapadia, documentario 2015</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-23"><p>Biografia di Amy Winehouse, morta a 27 anni per eccesso di droga e alcol, dall’infanzia con gravi difficoltà in famiglia fino al successo. <strong>Perché vederlo:</strong> segue il percorso di una persona di talento fino alla morte per le sostanze.</p></div>
+                </li>
+                <li class="opera" data-tipo="libro">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-24"><span class="opera-etichette"><span class="opera-tipo">Libro · Romanzo</span></span><span class="opera-titolo">Storia d’amore e perdizione</span><span class="opera-meta">Melvin Burgess, Salani 2012</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-24"><p>Tar e Gemma, 14 anni, fuggono da famiglie difficili e a Bristol incontrano l’eroina con altri due amici: la vivono come una via di fuga e ne diventano dipendenti. <strong>Perché leggerlo:</strong> racconta la dipendenza dal punto di vista di tutti i personaggi, genitori compresi.</p></div>
+                </li>
+                <li class="opera opera-forte" data-tipo="libro">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-25"><span class="opera-etichette"><span class="opera-tipo">Libro · Diario</span><span class="opera-forte-breve"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#warning"/></svg>Contenuto forte</span></span><span class="opera-titolo">Alice: i giorni della droga</span><span class="opera-meta">Anonimo, Feltrinelli</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-25"><p class="avviso"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#warning"/></svg><em>Contenuto forte: guardalo o leggilo prima di proporlo a tuo figlio o a tua figlia.</em></p><p>I diari di una ragazza di 15 anni che in due anni diventa dipendente: uno racconta la caduta, l’altro il tentativo di risalire. <strong>Perché leggerlo:</strong> descrive l’esperienza delle droghe in modo molto realistico e lascia intuire la solitudine che c’è dietro.</p></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="scheda tema" data-tema="depressione">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="tema-depressione" id="tema-depressione-t" data-tema-nome="Depressione">Depressione (6)<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="tema-depressione" role="region" aria-labelledby="tema-depressione-t">
+              <ul class="opere-elenco">
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-26"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Noi siamo infinito</span><span class="opera-meta">Stephen Chbosky, Stati Uniti 2012</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-26"><p>Charlie è timido e insicuro. Tra amicizie e primo amore riesce ad attraversare un periodo difficile. <strong>Perché vederlo:</strong> mostra come amicizia e primo amore aiutano ad attraversare un periodo difficile.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-27"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">5 giorni fuori</span><span class="opera-meta">Ryan Fleck e Anna Boden, 2010</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-27"><p>Craig, adolescente in ansia per le aspettative del padre, decide di trascorrere cinque giorni in una clinica psichiatrica. <strong>Perché vederlo:</strong> mostra il peso delle aspettative dei genitori e la scelta di chiedere aiuto.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-28"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">La storia infinita</span><span class="opera-meta">Wolfgang Petersen, Germania occidentale 1984, dal libro di Michael Ende</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-28"><p>Dopo la perdita della madre Bastian cade in depressione. Salvando il regno di Fantasia ritrova la voglia di vivere. <strong>Perché vederlo:</strong> racconta in forma di fiaba il lutto e la ripresa.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-29"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Gente comune</span><span class="opera-meta">Robert Redford, 1980</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-29"><p>Con il supporto di uno psichiatra, Conrad si libera dal senso di colpa per la morte del fratello e recupera il legame con il padre. <strong>Perché vederlo:</strong> mostra il ruolo del supporto psichiatrico nel superare il senso di colpa.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-30"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Ballando in silenzio</span><span class="opera-meta">Philipp Eichholtz, Germania 2015</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-30"><p>Luca, studentessa che combatte da anni una depressione profonda, si prepara a un esame importante con l’aiuto di un compagno. <strong>Perché vederlo:</strong> segue una ragazza che convive con la depressione e accetta l’aiuto di un compagno.</p></div>
+                </li>
+                <li class="opera" data-tipo="libro">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-31"><span class="opera-etichette"><span class="opera-tipo">Libro · Romanzo</span></span><span class="opera-titolo">La storia infinita</span><span class="opera-meta">Michael Ende, Corbaccio, Milano 2017</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-31"><p>Bastiano, 10 anni, cade in depressione dopo la morte della madre e vive isolato, anche perché alcuni compagni lo prendono in giro. Trova per caso un libro e, leggendone le avventure, recupera la sua vitalità. <strong>Perché leggerlo:</strong> con immagini e metafore racconta come si resta travolti dalla depressione e come se ne può uscire.</p></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="scheda tema" data-tema="rabbia">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="tema-rabbia" id="tema-rabbia-t" data-tema-nome="Rabbia e aggressività">Rabbia e aggressività (4)<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="tema-rabbia" role="region" aria-labelledby="tema-rabbia-t">
+              <ul class="opere-elenco">
+                <li class="opera opera-forte" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-32"><span class="opera-etichette"><span class="opera-tipo">Serie / TV</span><span class="opera-forte-breve"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#warning"/></svg>Contenuto forte</span></span><span class="opera-titolo">Mare fuori</span><span class="opera-meta">Serie tv, dal 2020</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-32"><p class="avviso"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#warning"/></svg><em>Contenuto forte: guardalo o leggilo prima di proporlo a tuo figlio o a tua figlia.</em></p><p>Ragazzi e ragazze in un istituto penale minorile di Napoli, ispirato al carcere di Nisida. <strong>Perché vederla:</strong> mostra la vita dei ragazzi dentro un istituto penale minorile.</p></div>
+                </li>
+                <li class="opera" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-33"><span class="opera-etichette"><span class="opera-tipo">Film</span></span><span class="opera-titolo">Nelle tue mani</span><span class="opera-meta">Ludovic Bernard, Francia e Belgio 2018</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-33"><p>Mathieu, giovane di una banlieue parigina arrestato per furto, scopre nella musica un altro modo di vivere. <strong>Perché vederlo:</strong> mostra che dopo un arresto può aprirsi un’altra strada.</p></div>
+                </li>
+                <li class="opera opera-forte" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-34"><span class="opera-etichette"><span class="opera-tipo">Film</span><span class="opera-forte-breve"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#warning"/></svg>Contenuto forte</span></span><span class="opera-titolo">Non essere cattivo</span><span class="opera-meta">Claudio Caligari, 2015</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-34"><p class="avviso"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#warning"/></svg><em>Contenuto forte: guardalo o leggilo prima di proporlo a tuo figlio o a tua figlia.</em></p><p>Due amici cresciuti in un quartiere degradato finiscono su strade diverse. <strong>Perché vederlo:</strong> mostra come lo stesso quartiere porti a esiti diversi.</p></div>
+                </li>
+                <li class="opera opera-forte" data-tipo="visivo">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-35"><span class="opera-etichette"><span class="opera-tipo">Film</span><span class="opera-forte-breve"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#warning"/></svg>Contenuto forte</span></span><span class="opera-titolo">Mery per sempre</span><span class="opera-meta">Marco Risi, 1989</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-35"><p class="avviso"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#warning"/></svg><em>Contenuto forte: guardalo o leggilo prima di proporlo a tuo figlio o a tua figlia.</em></p><p>In un riformatorio siciliano un insegnante propone un modo diverso di fare scuola e, superate le provocazioni, conquista la fiducia dei ragazzi. <strong>Perché vederlo:</strong> mostra che anche piccoli cambiamenti possono aprire spazi di speranza.</p></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="scheda tema" data-tema="specchio">
+            <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="tema-specchio" id="tema-specchio-t" data-tema-nome="Come si vede allo specchio">Come si vede allo specchio (3)<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
+            <div class="scheda-corpo" id="tema-specchio" role="region" aria-labelledby="tema-specchio-t">
+              <ul class="opere-elenco">
+                <li class="opera" data-tipo="libro">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-36"><span class="opera-etichette"><span class="opera-tipo">Libro</span></span><span class="opera-titolo">Amore senza bugie</span><span class="opera-meta">Cigala Fulgosi e Di Sabatino</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-36"><p>Indicato nel volume come lettura per giovani lettori.</p></div>
+                </li>
+                <li class="opera" data-tipo="libro">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-37"><span class="opera-etichette"><span class="opera-tipo">Libro · Romanzo</span></span><span class="opera-titolo">Il ritratto di Dorian Gray</span><span class="opera-meta">Oscar Wilde</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-37"><p>Romanzo sull’ossessione di un giovane per la propria bellezza, fissata in un dipinto. <strong>Perché leggerlo:</strong> il volume lo usa per spiegare come ci si può vedere brutti a causa di ciò che si ha dentro.</p></div>
+                </li>
+                <li class="opera" data-tipo="libro">
+                  <h5 class="opera-testa"><button type="button" class="opera-btn" aria-expanded="false" aria-controls="opera-38"><span class="opera-etichette"><span class="opera-tipo">Libro · Romanzo</span></span><span class="opera-titolo">Notre-Dame de Paris</span><span class="opera-meta">Victor Hugo</span><svg class="ico opera-freccia" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h5>
+                  <div class="opera-corpo" id="opera-38"><p>Racconto in cui l’idea di mostruosità si supera cambiando modo di pensare: Quasimodo è bruttissimo ma ha un’interiorità preziosa. <strong>Perché leggerlo:</strong> mostra che la bellezza interiore e l’amicizia rafforzano la stima di sé.</p></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ IL GESTO (con pausa fotografica 3) ============ -->
+  <section class="gesto" aria-label="Un gesto per stasera">
+    <figure class="pausa gesto-foto tono-scuro">
+      <picture>
+        <source type="image/avif" srcset="assets/img/scena-torta-480.avif 480w, assets/img/scena-torta-800.avif 800w, assets/img/scena-torta-1200.avif 1200w" sizes="(min-width: 768px) 50vw, 100vw">
+        <source type="image/webp" srcset="assets/img/scena-torta-480.webp 480w, assets/img/scena-torta-800.webp 800w, assets/img/scena-torta-1200.webp 1200w" sizes="(min-width: 768px) 50vw, 100vw">
+        <img src="assets/img/scena-torta-800.jpg" srcset="assets/img/scena-torta-480.jpg 480w, assets/img/scena-torta-800.jpg 800w, assets/img/scena-torta-1200.jpg 1200w" sizes="(min-width: 768px) 50vw, 100vw" width="1200" height="2133" loading="lazy" decoding="async" alt="Foto di scena di Chi come me: un ragazzo sorridente, con il viso sporco di panna, tiene una torta a braccia tese.">
+      </picture>
+    </figure>
+    <div class="gesto-card c-giallo">
+      <p class="gesto-attacco"><em>Stasera, a cena, prova a chiedere:</em></p>
+      <p class="gesto-domanda"><strong>Qual è stata la cosa <span class="segnata">più bella<img class="pennellata dipingi" src="assets/loghi/unhate-pennellata.svg" alt="" aria-hidden="true"></span> della tua settimana?</strong></p>
+      <a class="btn btn-nero btn-grande" href="https://wa.me/?text=Ho%20trovato%20questa%20pagina%20utile%20per%20parlare%20con%20i%20ragazzi.%20%C3%88%20nata%20dallo%20spettacolo%20Chi%20come%20me%3A%20https%3A%2F%2Fwww.unhatefoundation.org%2Fchicomeme" target="_blank" rel="noopener" data-condividi><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#share-network"/></svg>Passaparola</a>
+    </div>
+  </section>
+
+  <!-- ============ RESTIAMO IN CONTATTO ============ -->
+  <section class="sezione sezione-nera tono-scuro" id="restiamo-in-contatto" aria-labelledby="titolo-contatto">
+    <div class="sezione-testa">
+      <h2 id="titolo-contatto" class="titolo-sezione">Restiamo in contatto</h2>
+      <p class="intro-sezione">Stiamo preparando una serie di incontri dal vivo nel 2027, per continuare a parlare di questi temi insieme a genitori, insegnanti ed educatori. Lasciaci la tua email: ti scriveremo quando saranno pronti. Promettiamo di non riempirti la casella di posta, e potrai cancellarti quando vuoi.</p>
+    </div>
+
+    <div class="sezione-corpo">
+      <form class="modulo" id="modulo" novalidate>
+        <div class="campo">
+          <label for="f-email">La tua email</label>
+          <input id="f-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" required aria-describedby="f-email-errore">
+          <p class="errore" id="f-email-errore" hidden></p>
+        </div>
+
+        <div class="campo">
+          <label for="f-ruolo">Sono: <span class="facoltativo">(facoltativo)</span></label>
+          <select id="f-ruolo" name="ruolo">
+            <option value="">Seleziona</option>
+            <option value="genitore">genitore</option>
+            <option value="insegnante">insegnante</option>
+            <option value="educatore">educatore</option>
+            <option value="altro">altro</option>
+          </select>
+        </div>
+
+        <div class="campo campo-spunta">
+          <input id="f-consenso-1" name="consenso_iniziativa" type="checkbox" value="si" required aria-describedby="f-consenso-1-errore">
+          <label for="f-consenso-1">Ho letto l’<a href="#informativa-da-pubblicare" data-informativa target="_blank" rel="noopener">informativa privacy</a> e acconsento al trattamento dei miei dati per ricevere gli inviti e gli aggiornamenti di Unhate Foundation legati a questa iniziativa.</label>
+          <p class="errore" id="f-consenso-1-errore" hidden></p>
+        </div>
+
+        <div class="campo campo-spunta">
+          <input id="f-consenso-2" name="consenso_altre" type="checkbox" value="si">
+          <label for="f-consenso-2">Voglio ricevere anche le altre comunicazioni di Unhate Foundation.</label>
+        </div>
+
+        <!-- Campo anti-spam: invisibile a persone e lettori di schermo, deve restare vuoto -->
+        <div class="esca" aria-hidden="true">
+          <label for="f-sito">Sito web</label>
+          <input id="f-sito" name="sito_web" type="text" tabindex="-1" autocomplete="off">
+        </div>
+
+        <button type="submit" class="btn btn-verde btn-grande modulo-invia">Tienimi aggiornato</button>
+        <p class="modulo-stato" role="alert" hidden></p>
+        <p class="informativa-breve">Usiamo la tua email solo per mandarti inviti e aggiornamenti su questa iniziativa. Puoi cancellarti quando vuoi. Il modulo è riservato ai maggiorenni.</p>
+      </form>
+
+      <div class="grazie" id="grazie" tabindex="-1" hidden>
+        <p>Grazie! Ti scriveremo quando gli incontri saranno pronti. Nel frattempo, se ti va, seguici su <a href="https://www.instagram.com/unhatefoundation/" target="_blank" rel="noopener">Instagram</a> e <a href="https://www.linkedin.com/company/unhate-foundation" target="_blank" rel="noopener">LinkedIn</a>.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ PIÈ DI PAGINA ============ -->
+<footer class="piede tono-scuro">
+  <div class="piede-interno">
+    <div class="piede-loghi">
+      <img class="piede-unhate" src="assets/loghi/unhate-logo-rgb-neg.svg" alt="Unhate Foundation" width="160" height="52" loading="lazy">
+      <div class="piede-partner">
+        <p class="piede-etichetta">In collaborazione con</p>
+        <div class="piede-parenti">
+          <img src="assets/loghi/teatro-franco-parenti.svg" alt="Teatro Franco Parenti" width="200" height="52" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <p class="piede-chi">Noi siamo Unhate Foundation: contrastiamo l’odio e la violenza promuovendo solidarietà e dialogo, attraverso la cultura, l’arte e lo sport. Crediamo nei giovani e nel loro potenziale di guidare il cambiamento. <a href="https://www.unhatefoundation.org/it/chi-siamo/la-nostra-ambizione">Scopri chi siamo</a></p>
+
+    <div class="piede-social">
+      <span>Seguici su:</span>
+      <a href="https://www.instagram.com/unhatefoundation/" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#instagram-logo"/></svg>Instagram</a>
+      <a href="https://www.linkedin.com/company/unhate-foundation" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#linkedin-logo"/></svg>LinkedIn</a>
+    </div>
+
+    <a class="piede-condividi" href="https://wa.me/?text=Ho%20trovato%20questa%20pagina%20utile%20per%20parlare%20con%20i%20ragazzi.%20%C3%88%20nata%20dallo%20spettacolo%20Chi%20come%20me%3A%20https%3A%2F%2Fwww.unhatefoundation.org%2Fchicomeme" target="_blank" rel="noopener" data-condividi><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#share-network"/></svg>Passaparola</a>
+
+    <ul class="piede-link">
+      <li><a href="https://www.unhatefoundation.org/it/privacy-policy">Privacy policy</a></li>
+      <li><a href="#informativa-da-pubblicare" data-informativa>Informativa form “Chi come me”</a></li>
+      <li><a href="https://www.unhatefoundation.org/it/cookie-policy">Cookie policy</a></li>
+      <li><a href="https://www.unhatefoundation.org/it/accessibilita">Accessibilità</a></li>
+      <li><a href="https://www.unhatefoundation.org/it/contatti">Contatti</a></li>
+    </ul>
+
+    <div class="piede-legale">
+      <p class="piede-nota">I contenuti di questa pagina sono stati rivisti da professionisti della salute mentale. Non sostituiscono il parere di un medico o di uno specialista.</p>
+      <p>UNHATE Foundation ETS · Sede legale in Piazza di San Silvestro n. 8, 00187 Roma · PEC <a href="mailto:unhate@pec.unhatefoundation.org">unhate@pec.unhatefoundation.org</a></p>
+      <p>Copyright 2026, Unhate Foundation</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
