@@ -26,7 +26,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="assets/font/poppins-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/font/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/stile.css?v=20261119a">
+<link rel="stylesheet" href="css/stile.css?v=20261119b">
 <script>
   /* Animazione d'apertura: una sola volta per visita. Con "riduci movimento" si vede
      subito l'ultima schermata, ferma. In sessionStorage salviamo solo un segnale "già vista",
@@ -42,7 +42,7 @@
     } catch (e) {}
   })();
 </script>
-<script src="js/pagina.js?v=20261119a" defer></script>
+<script src="js/pagina.js?v=20261119b" defer></script>
 <!-- Google Analytics 4: Cookiebot lo attiva solo con il consenso "Marketing", come sul sito della Fondazione.
      Senza consenso questi due script non vengono eseguiti e non parte nessuna chiamata a Google. -->
 <script type="text/plain" data-cookieconsent="marketing" src="https://www.googletagmanager.com/gtag/js?id=G-060Y6CT574" async></script>
@@ -88,7 +88,8 @@
 </div>
 <script>
   /* Formato "storie": ogni frase resta 2 s, un tocco passa subito alla successiva,
-     "Salta" chiude. L'ultima schermata resta ferma finché si tocca o si scorre. */
+     "Salta" chiude. L'ultima schermata resta ferma finché si tocca o si scorre;
+     lì il pulsante diventa "Continua ↓". */
   (function () {
     var html = document.documentElement;
     var intro = document.getElementById('intro');
@@ -104,6 +105,7 @@
     var DURATA_FRASE = 2000, DURATA_DISSOLVENZA = 450;
     var schermi = intro.querySelectorAll('.intro-schermo');
     var barre = intro.querySelectorAll('.intro-barre span');
+    var bottone = intro.querySelector('.intro-salta');
     var ULTIMO = schermi.length - 1; // la schermata finale non ha un segmento
     var ridotto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var passo = 0, timer = null, finita = false, yInizio = null;
@@ -111,6 +113,8 @@
     function mostra(n) {
       passo = n;
       clearTimeout(timer);
+      /* sull'ultima schermata il pulsante non salta più: chiude e porta alla pagina */
+      bottone.textContent = n === ULTIMO ? 'Continua ↓' : 'Salta';
       for (var i = 0; i < schermi.length; i++) schermi[i].classList.toggle('attivo', i === n);
       for (var j = 0; j < barre.length; j++) {
         barre[j].classList.remove('in-corso');

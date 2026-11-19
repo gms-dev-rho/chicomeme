@@ -133,12 +133,20 @@ main { padding-top: var(--barra); }
   touch-action: none;
 }
 .intro.svanisce { opacity: 0; transition: opacity .45s ease-out; pointer-events: none; }
+/* Banda nera in alto: Safari colora le sue barre campionando la cima della pagina e aggiorna
+   in ritardo; con la cima sempre nera le barre restano nere per tutta l'animazione
+   (theme-color resta #000000 per gli altri browser). */
+.intro::before {
+  content: ""; position: absolute; z-index: 1; top: 0; left: 0; right: 0;
+  height: calc(max(12px, env(safe-area-inset-top)) + 16px);
+  background: var(--nero);
+}
 
 .intro-schermo {
   position: absolute; inset: 0;
   display: none;
   align-items: center;
-  padding: calc(max(12px, env(safe-area-inset-top)) + 76px) var(--margine) max(40px, env(safe-area-inset-bottom));
+  padding: calc(max(12px, env(safe-area-inset-top)) + 88px) var(--margine) max(40px, env(safe-area-inset-bottom));
 }
 .intro-schermo.attivo { display: flex; }
 
@@ -153,10 +161,10 @@ main { padding-top: var(--barra); }
   top: max(12px, env(safe-area-inset-top)); left: var(--margine); right: var(--margine);
   display: flex; gap: 4px;
 }
-.intro-barre span { flex: 1; height: 4px; background: rgba(0, 0, 0, .2); overflow: hidden; }
+.intro-barre span { flex: 1; height: 4px; background: rgba(255, 255, 255, .35); overflow: hidden; }
 .intro-barre span::after {
   content: ""; display: block; height: 100%;
-  background: var(--nero); transform: scaleX(0); transform-origin: left;
+  background: var(--bianco); transform: scaleX(0); transform-origin: left;
 }
 .intro-barre span.piena::after { transform: none; }
 .intro-barre span.in-corso::after { animation: riempi 2s linear both; }
@@ -183,7 +191,7 @@ main { padding-top: var(--barra); }
 
 .intro-salta {
   position: absolute; z-index: 2;
-  top: calc(max(12px, env(safe-area-inset-top)) + 16px); right: var(--margine);
+  top: calc(max(12px, env(safe-area-inset-top)) + 28px); right: var(--margine);
   min-height: 44px; padding: 8px 16px;
   font: 600 .9375rem/1 var(--font);
   color: var(--nero); background: var(--bianco); border: 2px solid var(--nero);
