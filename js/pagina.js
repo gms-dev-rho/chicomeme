@@ -3,7 +3,7 @@
 
 /* Indirizzi da sostituire facilmente (vedi LEGGIMI.txt) */
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby3z53nDUYCgPy4BmXFqqTG4V3YrCRL8ZJ4kMASH8FLhL-TPWPat2vQAWuilye1KK537w/exec';
-const INFORMATIVA_URL = '#informativa-da-pubblicare'; // SEGNAPOSTO: link all'informativa privacy del modulo
+const INFORMATIVA_URL = 'https://www.unhatefoundation.org/it/informativa-privacy-form-chi-come-me'; // informativa privacy del modulo
 
 (function () {
   'use strict';
@@ -244,7 +244,7 @@ const INFORMATIVA_URL = '#informativa-da-pubblicare'; // SEGNAPOSTO: link all'in
     });
   }
 
-  /* ---------- Statistiche: numeri, WhatsApp, report, toolkit ---------- */
+  /* ---------- Statistiche: numeri, WhatsApp, report, toolkit, richiesta incontro ---------- */
   function clic() {
     document.addEventListener('click', (e) => {
       const a = e.target.closest('a');

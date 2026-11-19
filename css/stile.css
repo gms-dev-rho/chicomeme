@@ -127,9 +127,10 @@ main { padding-top: var(--barra); }
 .con-intro .intro, .intro-uscita .intro {
   display: block;
   position: fixed; inset: 0; z-index: 500;
-  background: var(--nero);
+  background: var(--bianco);
   cursor: pointer;
   user-select: none; -webkit-user-select: none;
+  touch-action: none;
 }
 .intro.svanisce { opacity: 0; transition: opacity .45s ease-out; pointer-events: none; }
 
@@ -137,38 +138,56 @@ main { padding-top: var(--barra); }
   position: absolute; inset: 0;
   display: none;
   align-items: center;
-  padding: max(24px, env(safe-area-inset-top)) var(--margine) 64px;
+  padding: calc(max(12px, env(safe-area-inset-top)) + 76px) var(--margine) max(40px, env(safe-area-inset-bottom));
 }
-.intro[data-passo="0"] [data-n="0"],
-.intro[data-passo="1"] [data-n="1"],
-.intro[data-passo="2"] [data-n="2"],
-.intro[data-passo="3"] [data-n="3"],
-.intro[data-passo="4"] [data-n="4"] { display: flex; }
+.intro-schermo.attivo { display: flex; }
 
-.intro-nero   { background: var(--nero); color: var(--bianco); }
 .intro-verde  { background: var(--verde); }
 .intro-giallo { background: var(--giallo); }
 .intro-rosa   { background: var(--rosa); }
 .intro-bianco { background: var(--bianco); }
 
-.intro-titolo {
-  margin: 0; font-weight: 700;
-  font-size: clamp(3.5rem, 21vw, 12rem); line-height: .9; letter-spacing: -.045em;
+/* barra di avanzamento in alto, un segmento per frase */
+.intro-barre {
+  position: absolute; z-index: 2;
+  top: max(12px, env(safe-area-inset-top)); left: var(--margine); right: var(--margine);
+  display: flex; gap: 4px;
 }
+.intro-barre span { flex: 1; height: 4px; background: rgba(0, 0, 0, .2); overflow: hidden; }
+.intro-barre span::after {
+  content: ""; display: block; height: 100%;
+  background: var(--nero); transform: scaleX(0); transform-origin: left;
+}
+.intro-barre span.piena::after { transform: none; }
+.intro-barre span.in-corso::after { animation: riempi 2s linear both; }
+@keyframes riempi { from { transform: scaleX(0); } to { transform: none; } }
+
 .intro-frase {
   margin: 0; font-weight: 700;
-  font-size: clamp(2.4rem, 12.4vw, 8.5rem); line-height: .92; letter-spacing: -.04em;
-  max-width: 11ch;
+  font-size: clamp(2.2rem, 11vw, 7.5rem); line-height: .94; letter-spacing: -.04em;
+  max-width: 12ch;
   animation: schiaffo .14s cubic-bezier(.2, .9, .3, 1) both;
 }
 .intro-attacco { display: block; font-size: .32em; letter-spacing: -.01em; line-height: 1.1; margin-bottom: .35em; }
-.intro-finale { max-width: 9ch; }
 @keyframes schiaffo { from { transform: scale(1.12); } to { transform: none; } }
 
+/* ultima schermata: resta ferma finché si tocca o si scorre */
+.intro-fine { max-width: 44rem; }
+.intro-fine-titolo {
+  margin: 0 0 .45em; font-weight: 700;
+  font-size: clamp(2.6rem, 13vw, 7rem); line-height: .92; letter-spacing: -.045em;
+  max-width: 10ch;
+}
+.intro-fine-testo { margin: 0 0 16px; font-size: clamp(1.0625rem, 4.4vw, 1.375rem); line-height: 1.4; max-width: 34rem; }
+.intro-fine-fonte { margin: 0; font-size: .8125rem; color: var(--grigio-testo); }
+
 .intro-salta {
-  position: absolute; right: var(--margine); bottom: max(20px, env(safe-area-inset-bottom));
-  margin: 0; font-size: .8125rem; font-weight: 600;
-  color: var(--nero); background: var(--bianco); padding: 4px 10px;
+  position: absolute; z-index: 2;
+  top: calc(max(12px, env(safe-area-inset-top)) + 16px); right: var(--margine);
+  min-height: 44px; padding: 8px 16px;
+  font: 600 .9375rem/1 var(--font);
+  color: var(--nero); background: var(--bianco); border: 2px solid var(--nero);
+  cursor: pointer;
 }
 
 /* ---------- Pennellata (solo su poche parole chiave) ---------- */
@@ -180,7 +199,6 @@ main { padding-top: var(--barra); }
   pointer-events: none;
 }
 .segnata-sotto .pennellata { bottom: -.2em; height: .3em; }
-.intro .pennellata { animation: dipingi .42s cubic-bezier(.6, 0, .2, 1) .12s both; }
 .pennellata.dipingi { clip-path: inset(0 100% 0 0); }
 .pennellata.dipingi.visibile { animation: dipingi .45s cubic-bezier(.6, 0, .2, 1) .1s both; }
 @keyframes dipingi { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
@@ -284,6 +302,20 @@ main { padding-top: var(--barra); }
 .sezione-rosa .btn { margin-top: 28px; }
 .sezione-rosa { padding-bottom: 48px; }
 .sezione-rosa .sezione-testa { margin-bottom: 0; }
+
+/* Scuole e aziende: richiesta di un incontro, dopo il toolkit */
+.incontri { margin-top: 48px; padding-top: 32px; border-top: 2px solid var(--nero); }
+.incontri-titolo { font-size: clamp(1.6rem, 7vw, 2.75rem); line-height: 1.08; letter-spacing: -.03em; max-width: 48rem; margin-bottom: 16px; }
+
+/* Respira: avviso leggero prima di Capire (niente icone di allerta, niente arancio) */
+.respira { padding: 56px var(--margine) 0; max-width: var(--largo); margin: 0 auto; }
+.respira-box { background: var(--grigio); padding: 28px 20px 30px; max-width: 48rem; }
+.respira-titolo {
+  margin: 0 0 18px; font-weight: 700;
+  font-size: clamp(2.4rem, 11vw, 4.5rem); line-height: .95; letter-spacing: -.045em;
+}
+.respira-testo { margin: 0; font-size: 1.125rem; max-width: var(--colonna); }
+@media (min-width: 768px) { .respira-box { padding: 36px 36px 40px; } }
 
 /* link dentro i testi sulle sezioni nere: bianchi, sottolineati in verde */
 .sezione-nera :is(.intro-sezione, .testo, .riga-118) a { color: var(--bianco); text-decoration-color: var(--verde); }
@@ -403,10 +435,9 @@ main { padding-top: var(--barra); }
 .ricorda li::before { content: counter(ricorda); font-weight: 700; font-size: 3.5rem; line-height: .85; letter-spacing: -.05em; }
 .ricorda p { margin: 0; font-size: 1.125rem; }
 
-/* Righe 118 e fonti */
+/* Riga 118 */
 /* riga discreta: testo normale, corpo più piccolo, nessun riquadro */
 .riga-118 { max-width: 48rem; margin: 48px 0 12px; font-size: 1rem; }
-.riga-fonti { max-width: 48rem; font-size: .875rem; color: var(--grigio-testo); margin: 0; }
 
 /* Parlarne: card che cambia frase */
 .frasi { background: var(--rosa); padding: 28px 20px 20px; max-width: 48rem; display: flex; flex-direction: column; gap: 20px; }
@@ -465,6 +496,7 @@ main { padding-top: var(--barra); }
   .btn-chiama:hover { background: #d9d9d9; }
   .btn-contorno:hover { background: var(--bianco); color: var(--nero); }
 }
+.contatto-costo { margin: 6px 0 0; font-size: .9375rem; line-height: 1.45; color: var(--bianco); }
 .sezione-rubrica .nota-verifica { margin-top: 14px; font-size: .9375rem; color: #c4c4c4; }
 .sezione-rubrica .nota-verifica a { color: #c4c4c4; }
 

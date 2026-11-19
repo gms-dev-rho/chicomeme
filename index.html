@@ -26,23 +26,23 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="assets/font/poppins-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/font/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/stile.css?v=20261115d">
+<link rel="stylesheet" href="css/stile.css?v=20261119a">
 <script>
-  /* Animazione d'apertura: una sola volta per visita, mai con "riduci movimento".
-     In sessionStorage salviamo solo un segnale "già vista", nessun dato personale. */
+  /* Animazione d'apertura: una sola volta per visita. Con "riduci movimento" si vede
+     subito l'ultima schermata, ferma. In sessionStorage salviamo solo un segnale "già vista",
+     nessun dato personale. */
   window.ccmTraccia = function (nome, parametri) {
     if (typeof window.gtag === 'function') window.gtag('event', nome, parametri || {});
   };
   (function () {
     try {
-      var ridotto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!ridotto && !sessionStorage.getItem('ccm-intro')) {
+      if (!sessionStorage.getItem('ccm-intro')) {
         document.documentElement.classList.add('con-intro');
       }
     } catch (e) {}
   })();
 </script>
-<script src="js/pagina.js?v=20261115d" defer></script>
+<script src="js/pagina.js?v=20261119a" defer></script>
 <!-- Google Analytics 4: Cookiebot lo attiva solo con il consenso "Marketing", come sul sito della Fondazione.
      Senza consenso questi due script non vengono eseguiti e non parte nessuna chiamata a Google. -->
 <script type="text/plain" data-cookieconsent="marketing" src="https://www.googletagmanager.com/gtag/js?id=G-060Y6CT574" async></script>
@@ -57,25 +57,38 @@
 <body>
 
 <!-- ============ ANIMAZIONE D'APERTURA (decorativa) ============ -->
-<div class="intro" id="intro" aria-hidden="true" data-passo="0">
-  <div class="intro-schermo intro-nero" data-n="0">
-    <p class="intro-titolo">Chi come <span class="segnata">me<img class="pennellata" src="assets/loghi/unhate-pennellata.svg" alt=""></span>?</p>
-  </div>
-  <div class="intro-schermo intro-verde" data-n="1">
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-barre"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <button type="button" class="intro-salta" tabindex="-1">Salta</button>
+  <div class="intro-schermo intro-verde attivo">
     <p class="intro-frase"><span class="intro-attacco">Chi come me…</span> non sa più cosa chiedere a cena?</p>
   </div>
-  <div class="intro-schermo intro-giallo" data-n="2">
+  <div class="intro-schermo intro-giallo">
     <p class="intro-frase"><span class="intro-attacco">Chi come me…</span> ha paura di dire la cosa sbagliata?</p>
   </div>
-  <div class="intro-schermo intro-rosa" data-n="3">
+  <div class="intro-schermo intro-rosa">
+    <p class="intro-frase"><span class="intro-attacco">Chi come me…</span> non sa se è solo una fase?</p>
+  </div>
+  <div class="intro-schermo intro-verde">
+    <p class="intro-frase"><span class="intro-attacco">Chi come me…</span> si sente in colpa quando perde la pazienza?</p>
+  </div>
+  <div class="intro-schermo intro-giallo">
+    <p class="intro-frase"><span class="intro-attacco">Chi come me…</span> ha paura di essere troppo presente, o troppo poco?</p>
+  </div>
+  <div class="intro-schermo intro-rosa">
     <p class="intro-frase"><span class="intro-attacco">Chi come me…</span> a volte non riconosce più suo figlio?</p>
   </div>
-  <div class="intro-schermo intro-bianco" data-n="4">
-    <p class="intro-frase intro-finale">Più persone di quanto pensi.</p>
+  <div class="intro-schermo intro-bianco">
+    <div class="intro-fine">
+      <p class="intro-fine-titolo">Più persone di quanto pensi.</p>
+      <p class="intro-fine-testo">E anche loro: secondo Unfiltered, quasi 1 ragazzo su 2 tra i 13 e i 24 anni è «sfiduciato sotto pressione» (24%) o «irrequieto in bilico» (25%).</p>
+      <p class="intro-fine-fonte">Fonte: Unfiltered, la ricerca di Unhate Foundation.</p>
+    </div>
   </div>
-  <p class="intro-salta">Tocca per saltare</p>
 </div>
 <script>
+  /* Formato "storie": ogni frase resta 2 s, un tocco passa subito alla successiva,
+     "Salta" chiude. L'ultima schermata resta ferma finché si tocca o si scorre. */
   (function () {
     var html = document.documentElement;
     var intro = document.getElementById('intro');
@@ -86,38 +99,64 @@
       intro = null;
     }
     if (!html.classList.contains('con-intro')) { togli(); return; }
-
-    /* cambi di schermata (ms): nero → verde → giallo → rosa → bianco;
-       il bianco "Più persone di quanto pensi." resta fermo 2 s, poi dissolvenza */
-    var cambi = [800, 1500, 2200, 2900];
-    var DISSOLVENZA_DA = 4900, DURATA_DISSOLVENZA = 450;
-    var timer = [];
-    var finita = false;
     try { sessionStorage.setItem('ccm-intro', '1'); } catch (e) {}
+
+    var DURATA_FRASE = 2000, DURATA_DISSOLVENZA = 450;
+    var schermi = intro.querySelectorAll('.intro-schermo');
+    var barre = intro.querySelectorAll('.intro-barre span');
+    var ULTIMO = schermi.length - 1; // la schermata finale non ha un segmento
+    var ridotto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var passo = 0, timer = null, finita = false, yInizio = null;
+
+    function mostra(n) {
+      passo = n;
+      clearTimeout(timer);
+      for (var i = 0; i < schermi.length; i++) schermi[i].classList.toggle('attivo', i === n);
+      for (var j = 0; j < barre.length; j++) {
+        barre[j].classList.remove('in-corso');
+        barre[j].classList.toggle('piena', j < n);
+      }
+      if (n < ULTIMO) {
+        void barre[n].offsetWidth; // fa ripartire il riempimento del segmento
+        barre[n].classList.add('in-corso');
+        timer = setTimeout(function () { mostra(n + 1); }, DURATA_FRASE);
+      }
+    }
     function fine() {
       if (finita) return;
       finita = true;
-      timer.forEach(function (t) { clearTimeout(t); });
-      document.removeEventListener('keydown', salta);
-      togli();
-    }
-    function salta() { if (!finita) { window.ccmTraccia('salta_animazione'); fine(); } }
-    cambi.forEach(function (t, i) {
-      timer.push(setTimeout(function () { if (intro) intro.setAttribute('data-passo', i + 1); }, t));
-    });
-    timer.push(setTimeout(function () {
-      if (!intro) return;
+      clearTimeout(timer);
+      document.removeEventListener('keydown', tasto);
       intro.classList.add('svanisce');
       html.classList.remove('con-intro');
       html.classList.add('intro-uscita');
-      timer.push(setTimeout(fine, DURATA_DISSOLVENZA));
-    }, DISSOLVENZA_DA));
-    intro.addEventListener('pointerdown', salta);
-    document.addEventListener('keydown', salta);
-    /* rete di sicurezza: in ogni caso, dopo 6 s l'animazione non c'è più */
-    setTimeout(fine, 6000);
+      setTimeout(togli, ridotto ? 0 : DURATA_DISSOLVENZA);
+    }
+    function salta() {
+      if (finita) return;
+      if (passo < ULTIMO) window.ccmTraccia('salta_animazione');
+      fine();
+    }
+    function avanti() { if (passo < ULTIMO) mostra(passo + 1); else fine(); }
+    function tasto(e) {
+      if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); avanti(); }
+      else salta(); // Esc, Tab e ogni altro tasto: si entra nella pagina
+    }
+
+    intro.addEventListener('click', function (e) {
+      if (e.target.closest('.intro-salta')) salta(); else avanti();
+    });
+    document.addEventListener('keydown', tasto);
+    /* scorrere (rotella o dito) porta subito alla pagina */
+    intro.addEventListener('wheel', function (e) { if (Math.abs(e.deltaY) > 4) salta(); }, { passive: true });
+    intro.addEventListener('touchstart', function (e) { yInizio = e.touches[0].clientY; }, { passive: true });
+    intro.addEventListener('touchmove', function (e) {
+      if (yInizio !== null && Math.abs(e.touches[0].clientY - yInizio) > 40) { yInizio = null; salta(); }
+    }, { passive: true });
     /* se il browser ripristina la pagina dalla cache (tasto indietro), niente animazione */
-    window.addEventListener('pageshow', function (e) { if (e.persisted) fine(); });
+    window.addEventListener('pageshow', function (e) { if (e.persisted) { finita = true; clearTimeout(timer); togli(); } });
+
+    mostra(ridotto ? ULTIMO : 0);
   })();
 </script>
 
@@ -152,6 +191,7 @@
       <p><em>Chi come me</em> racconta cinque adolescenti in un centro di salute mentale e il teatro che li aiuta a ritrovarsi. È nato da una storia vera: quella dell’autore Roy Chen, che nel 2019 ha trascorso settimane con i ragazzi di un centro di Tel Aviv.</p>
       <p>Questa pagina è per te, se sei genitore, insegnante o educatore, o lavori con ragazzi giovani e spesso non li capisci, e vuoi continuare a farti domande anche dopo il sipario. Non trovi diagnosi né ricette: trovi spunti per guardare meglio, parole per iniziare una conversazione e indirizzi a cui rivolgerti.</p>
       <p>Noi siamo Unhate Foundation: siamo partner dello spettacolo e lavoriamo al fianco dei più giovani e delle loro fragilità.</p>
+      <p>Non devi capire tutto da solo: a te basta osservare. Se qualcosa non ti torna, chiedere aiuto è la scelta giusta.</p>
     </div>
 
     <div class="apertura-azioni">
@@ -178,7 +218,7 @@
       <li><a href="#parlarne">Parlarne</a></li>
       <li><a href="#a-chi-rivolgersi">A chi rivolgersi</a></li>
       <li><a href="#i-dati">I dati</a></li>
-      <li><a href="#per-la-scuola">Per la scuola</a></li>
+      <li><a href="#scuole-e-aziende">Scuole e aziende</a></li>
       <li><a href="#per-approfondire">Per approfondire</a></li>
       <li><a href="#restiamo-in-contatto">Restiamo in contatto</a></li>
     </ul>
@@ -247,6 +287,14 @@
     </div>
   </section>
 
+  <!-- ============ RESPIRA (avviso leggero prima di Capire) ============ -->
+  <aside class="respira" aria-labelledby="titolo-respira">
+    <div class="respira-box">
+      <p class="respira-titolo" id="titolo-respira"><span class="segnata segnata-sotto">Respira.<img class="pennellata dipingi" src="assets/loghi/unhate-pennellata.svg" alt="" aria-hidden="true"></span></p>
+      <p class="respira-testo">Sì, sono tante informazioni. Non perché ci sia da preoccuparsi, ma perché il tema è importante e merita cura. È complesso il tema, non per forza la tua situazione. Leggi con calma, anche a pezzi: la pagina resta qui.</p>
+    </div>
+  </aside>
+
   <!-- ============ CAPIRE ============ -->
   <section class="sezione sezione-chiara sezione-con-ponte" id="capire" aria-labelledby="titolo-capire">
     <div class="sezione-testa">
@@ -258,7 +306,7 @@
     <div class="sezione-corpo">
       <div class="blocco">
         <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">1</span>Prima di tutto: l’adolescenza è un passaggio</h3>
-        <p class="testo">Il corpo cambia in fretta e la mente deve lasciare il mondo rassicurante dell’infanzia per costruirsi un’identità propria. È come un trapezista che ha lasciato il primo trapezio e non ha ancora afferrato il secondo. La parola “crisi” viene dal greco <em>krisis</em>: un passaggio, con un prima e un dopo. Tutti i ragazzi lo attraversano, e solo una parte sta davvero male. Tu conosci tuo figlio meglio di chiunque: fidati delle tue sensazioni, sono una buona bussola.</p>
+        <p class="testo">Il corpo cambia in fretta e la mente deve lasciare il mondo rassicurante dell’infanzia per costruirsi un’identità propria. La parola “crisi” viene dal greco <em>krisis</em>: un passaggio, con un prima e un dopo. Tutti i ragazzi lo attraversano, e solo una parte sta davvero male. Tu conosci tuo figlio meglio di chiunque: fidati delle tue sensazioni, sono una buona bussola. E se qualcosa non ti è chiaro, chiedere aiuto è la scelta giusta: non devi capire tutto da solo.</p>
 
         <div class="riquadro c-verde">
           <h4 class="riquadro-titolo">Fa parte della crescita</h4>
@@ -275,6 +323,7 @@
 
       <div class="blocco">
         <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">2</span>Come distinguere: quattro domande</h3>
+        <p class="testo">Tristezza, rabbia, chiusura, sbalzi d’umore: lo stesso comportamento può far parte della crescita oppure essere il segnale di un disagio. A fare la differenza non è il comportamento in sé, ma come si presenta. Queste quattro domande non servono a fare una diagnosi: ti aiutano a capire quando è il caso di chiedere un parere.</p>
         <div class="domande mini-carosello" role="region" aria-roledescription="carosello" aria-label="Quattro domande per distinguere">
           <ul class="domande-traccia mini-traccia" tabindex="0" aria-label="Quattro domande, scorri in orizzontale">
           <li class="domanda mini-card" role="group" aria-roledescription="domanda" aria-label="1 di 4">
@@ -314,7 +363,7 @@
             <div class="scheda-corpo" id="scheda-1" role="region" aria-labelledby="scheda-1-t">
               <p><strong>Cosa potresti notare:</strong> è spesso giù, svogliato o irritabile; perde interesse per cose che prima amava; passa giornate in camera ed evita gli amici; dorme troppo o troppo poco; ha momenti di paura improvvisa con il cuore che batte forte, fiato corto, la sensazione di perdere il controllo.</p>
               <p><strong>Quando fare più attenzione:</strong> quando dura settimane, porta all’isolamento o rende impossibile studiare. Negli adolescenti la tristezza a volte si vede come rabbia o nervosismo.</p>
-              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
+              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Non devi arrivare da solo a una risposta. Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
             </div>
           </div>
           <div class="scheda">
@@ -322,7 +371,7 @@
             <div class="scheda-corpo" id="scheda-2" role="region" aria-labelledby="scheda-2-t">
               <p><strong>Cosa potresti notare:</strong> toglie un cibo dopo l’altro, non vuole mangiare con gli altri, è molto preoccupato per il proprio corpo; controlla di continuo lo specchio o lo evita del tutto; nasconde un presunto difetto; evita uscite per non farsi vedere.</p>
               <p><strong>Quando fare più attenzione:</strong> quando diventa un pensiero fisso che toglie spazio alla vita sociale. Scegliere uno stile alimentare, per esempio vegetariano, non è di per sé un segnale.</p>
-              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
+              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Non devi arrivare da solo a una risposta. Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
             </div>
           </div>
           <div class="scheda">
@@ -330,7 +379,7 @@
             <div class="scheda-corpo" id="scheda-3" role="region" aria-labelledby="scheda-3-t">
               <p><strong>Cosa potresti notare:</strong> paura o resistenza ad andare a scuola; “tutto bene” detto sempre, ma racconta poco; mal di pancia o di testa senza una causa chiara; oggetti rovinati o spariti senza spiegazione; escluso dalle chat o dalle feste di classe. Oppure, al contrario: aggressività, prepotenza, esplosioni di rabbia sproporzionate.</p>
               <p><strong>Quando fare più attenzione:</strong> quando gli episodi si ripetono. Chi subisce spesso tace per paura; chi fa prepotenze sta comunque esprimendo un disagio.</p>
-              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
+              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Non devi arrivare da solo a una risposta. Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
             </div>
           </div>
           <div class="scheda">
@@ -338,7 +387,7 @@
             <div class="scheda-corpo" id="scheda-4" role="region" aria-labelledby="scheda-4-t">
               <p><strong>Cosa potresti notare:</strong> non riesce a staccarsi dal gioco o dal telefono anche quando ne soffrono sonno e studio; si sveglia di notte per le notifiche; è molto irritabile quando deve smettere; cambia peso, appetito o sonno all’improvviso; si allontana dalla scuola e dagli amici.</p>
               <p><strong>Quando fare più attenzione:</strong> molte ore online non significano per forza un problema. Conta come le passa: se condivide e si diverte, o se si perde e sposta lì tutte le relazioni.</p>
-              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
+              <div class="cosa-fare"><p class="cosa-fare-titolo">Cosa fare adesso</p><p>Non devi arrivare da solo a una risposta. Prova a parlarne con calma, senza giudicare (<a href="#parlarne">Parlarne</a>). Se il dubbio resta, confrontati con il pediatra o con uno specialista (<a href="#a-chi-rivolgersi">A chi rivolgersi</a>).</p></div>
             </div>
           </div>
         </div>
@@ -354,7 +403,6 @@
       </div>
 
       <p class="riga-118">Se c’è un pericolo immediato, per esempio minaccia di farsi del male o si è fatto male, <a href="tel:118" data-servizio="118">chiama il 118</a>.</p>
-      <p class="riga-fonti">I contenuti di questa sezione si basano sulla collana Bios Psychè Adolescenza (L’Asino d’oro edizioni) e sono stati rivisti da professionisti della salute mentale.</p>
     </div>
 
     <div class="ponte c-verde">
@@ -517,20 +565,23 @@
           <li class="contatto">
             <h4 class="contatto-nome">Il pediatra o il medico di base</h4>
             <p class="contatto-desc">Conosce tuo figlio e la sua storia. Può darti un primo parere e, se serve, indirizzarti ai servizi giusti.</p>
+            <p class="contatto-costo">Gratuito</p>
           </li>
           <li class="contatto">
             <h4 class="contatto-nome">Lo sportello d’ascolto della scuola</h4>
             <p class="contatto-desc">Molte scuole hanno uno psicologo a disposizione di studenti, insegnanti e genitori. Per accedere basta chiedere alla segreteria.</p>
+            <p class="contatto-costo">Gratuito</p>
           </li>
         </ul>
       </div>
 
       <div class="blocco">
-        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">2</span>Per parlare con qualcuno, gratis</h3>
+        <h3 class="sottotitolo-sezione"><span class="num" aria-hidden="true">2</span>Per parlare con qualcuno</h3>
         <ul class="rubrica">
           <li class="contatto">
             <h4 class="contatto-nome">Telefono Azzurro</h4>
             <p class="contatto-desc">Per bambini, ragazzi e adulti preoccupati per loro<br>24 ore su 24, tutti i giorni</p>
+            <p class="contatto-costo">Gratuito</p>
             <div class="contatto-azioni">
               <a class="btn btn-chiama" href="tel:19696" data-servizio="Telefono Azzurro"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#phone"/></svg>Chiama 19696</a>
               <a class="btn btn-contorno" href="https://www.azzurro.it" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#chat-circle-dots"/></svg>Chatta</a>
@@ -539,6 +590,7 @@
           <li class="contatto">
             <h4 class="contatto-nome">Telefono Amico Italia</h4>
             <p class="contatto-desc">Per chiunque abbia bisogno di parlare<br>Telefono 24 ore su 24 · WhatsApp 18–21</p>
+            <p class="contatto-costo">Servizio gratuito; la chiamata costa come una normale telefonata verso un fisso (nulla con i minuti illimitati). WhatsApp gratuito.</p>
             <div class="contatto-azioni">
               <a class="btn btn-chiama" href="tel:+390223272327" data-servizio="Telefono Amico Italia"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#phone"/></svg>Chiama 02 2327 2327</a>
               <a class="btn btn-contorno" href="https://wa.me/393240117252" target="_blank" rel="noopener" data-servizio="Telefono Amico Italia WhatsApp"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#whatsapp-logo"/></svg>WhatsApp</a>
@@ -565,6 +617,7 @@
           <li class="contatto">
             <h4 class="contatto-nome">PsyMap</h4>
             <p class="contatto-desc">Il motore di ricerca dell’Ordine degli Psicologi della Lombardia: inserisci l’indirizzo e trovi prima i servizi pubblici vicini, poi i professionisti.</p>
+            <p class="contatto-costo">La ricerca è gratuita; i professionisti privati sono a pagamento.</p>
             <a class="contatto-link" href="https://www.psymap.it" target="_blank" rel="noopener">Cerca su psymap.it<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#arrow-up-right"/></svg></a>
           </li>
         </ul>
@@ -619,12 +672,17 @@
     </div>
   </section>
 
-  <!-- ============ PER LA SCUOLA ============ -->
-  <section class="sezione sezione-rosa" id="per-la-scuola" aria-labelledby="titolo-scuola">
+  <!-- ============ SCUOLE E AZIENDE ============ -->
+  <section class="sezione sezione-rosa" id="scuole-e-aziende" aria-labelledby="titolo-scuola">
     <div class="sezione-testa">
-      <h2 id="titolo-scuola" class="titolo-sezione">Per la scuola</h2>
+      <h2 id="titolo-scuola" class="titolo-sezione">Scuole e aziende</h2>
       <p class="intro-sezione">Lavori con gli adolescenti a scuola, nello sport o in altri contesti educativi? Insieme a Fondazione Poetica abbiamo preparato un toolkit con pratiche semplici, nate dall’ascolto dei ragazzi di Unfiltered, da usare con il tuo gruppo.</p>
       <a class="btn btn-nero btn-grande" href="https://sites.google.com/view/unhatefoundation-toolkit/homepage" target="_blank" rel="noopener" data-traccia="click_toolkit"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#graduation-cap"/></svg>Scopri il toolkit</a>
+      <div class="incontri">
+        <h3 class="incontri-titolo">Portiamo questo dialogo dove serve</h3>
+        <p class="intro-sezione">Incontriamo genitori, insegnanti, educatori e lavoratori nelle scuole e nelle aziende per parlare di adolescenti, benessere e prevenzione. Se vuoi organizzare un incontro, scrivici.</p>
+        <a class="btn btn-nero btn-grande" href="mailto:info@unhatefoundation.org?subject=Richiesta%20incontro%20%E2%80%93%20Chi%20come%20me" data-traccia="richiesta_incontro"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#envelope-simple"/></svg>Scrivici</a>
+      </div>
     </div>
   </section>
 
@@ -638,7 +696,7 @@
     <div class="sezione-corpo">
       <div class="blocco">
         <h3 class="sottotitolo-sezione">I libri della collana dell’Asino d’oro</h3>
-        <p class="testo">I contenuti della sezione Capire vengono dai volumi della collana Bios Psychè Adolescenza, pubblicata da L’Asino d’oro edizioni. Ogni volume approfondisce un tema. Sono scritti da psichiatre, psichiatri, psicologhe, psicologi e psicoterapeuti e sono un buon punto di partenza per chi vuole approfondire.</p>
+        <p class="testo">Bios Psychè Adolescenza è una collana di L’Asino d’oro edizioni dedicata all’adolescenza, pensata sia per i ragazzi sia per gli adulti. Ogni volume approfondisce un tema ed è scritto da psichiatre, psichiatri, psicologhe, psicologi e psicoterapeuti.</p>
         <div class="schede schede-piccole">
           <div class="scheda">
             <h4 class="scheda-testa"><button type="button" class="scheda-btn" aria-expanded="false" aria-controls="collana-libri" id="collana-libri-t">Vedi i 9 libri della collana<svg class="ico" aria-hidden="true"><use href="assets/icone.svg#caret-down"/></svg></button></h4>
@@ -914,7 +972,7 @@
 
         <div class="campo campo-spunta">
           <input id="f-consenso-1" name="consenso_iniziativa" type="checkbox" value="si" required aria-describedby="f-consenso-1-errore">
-          <label for="f-consenso-1">Ho letto l’<a href="#informativa-da-pubblicare" data-informativa target="_blank" rel="noopener">informativa privacy</a> e acconsento al trattamento dei miei dati per ricevere gli inviti e gli aggiornamenti di Unhate Foundation legati a questa iniziativa.</label>
+          <label for="f-consenso-1">Ho letto l’<a href="https://www.unhatefoundation.org/it/informativa-privacy-form-chi-come-me" data-informativa target="_blank" rel="noopener">informativa privacy</a> e acconsento al trattamento dei miei dati per ricevere gli inviti e gli aggiornamenti di Unhate Foundation legati a questa iniziativa.</label>
           <p class="errore" id="f-consenso-1-errore" hidden></p>
         </div>
 
@@ -956,6 +1014,7 @@
     </div>
 
     <p class="piede-chi">Noi siamo Unhate Foundation: contrastiamo l’odio e la violenza promuovendo solidarietà e dialogo, attraverso la cultura, l’arte e lo sport. Crediamo nei giovani e nel loro potenziale di guidare il cambiamento. <a href="https://www.unhatefoundation.org/it/chi-siamo/la-nostra-ambizione">Scopri chi siamo</a></p>
+    <p class="piede-chi">Unhate Foundation, ideata e fondata nel 2024 da Alessandro Benetton, è un Ente del Terzo Settore sostenuto da Edizione, Mundys e Aeroporti di Roma.</p>
 
     <div class="piede-social">
       <span>Seguici su:</span>
@@ -967,7 +1026,7 @@
 
     <ul class="piede-link">
       <li><a href="https://www.unhatefoundation.org/it/privacy-policy">Privacy policy</a></li>
-      <li><a href="#informativa-da-pubblicare" data-informativa>Informativa form “Chi come me”</a></li>
+      <li><a href="https://www.unhatefoundation.org/it/informativa-privacy-form-chi-come-me" data-informativa>Informativa form “Chi come me”</a></li>
       <li><a href="https://www.unhatefoundation.org/it/cookie-policy">Cookie policy</a></li>
       <li><a href="https://www.unhatefoundation.org/it/accessibilita">Accessibilità</a></li>
       <li><a href="https://www.unhatefoundation.org/it/contatti">Contatti</a></li>
