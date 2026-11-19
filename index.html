@@ -15,7 +15,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Chi come me? Più persone di quanto pensi.">
 <meta property="og:description" content="Strumenti per capire, parlare e chiedere aiuto. Per genitori, insegnanti, educatori o per chi ha semplicemente a cuore i ragazzi. Da Unhate Foundation">
-<meta property="og:url" content="https://www.unhatefoundation.org/chicomeme">
+<meta property="og:url" content="https://www.unhatefoundation.org/chicomeme/">
 <meta property="og:image" content="https://www.unhatefoundation.org/chicomeme/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -26,7 +26,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="assets/font/poppins-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/font/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/stile.css?v=20261119b">
+<link rel="stylesheet" href="css/stile.css?v=20261119c">
 <script>
   /* Animazione d'apertura: una sola volta per visita. Con "riduci movimento" si vede
      subito l'ultima schermata, ferma. In sessionStorage salviamo solo un segnale "già vista",
@@ -42,7 +42,7 @@
     } catch (e) {}
   })();
 </script>
-<script src="js/pagina.js?v=20261119b" defer></script>
+<script src="js/pagina.js?v=20261119c" defer></script>
 <!-- Google Analytics 4: Cookiebot lo attiva solo con il consenso "Marketing", come sul sito della Fondazione.
      Senza consenso questi due script non vengono eseguiti e non parte nessuna chiamata a Google. -->
 <script type="text/plain" data-cookieconsent="marketing" src="https://www.googletagmanager.com/gtag/js?id=G-060Y6CT574" async></script>
@@ -81,7 +81,7 @@
   <div class="intro-schermo intro-bianco">
     <div class="intro-fine">
       <p class="intro-fine-titolo">Più persone di quanto pensi.</p>
-      <p class="intro-fine-testo">E anche loro: secondo Unfiltered, quasi 1 ragazzo su 2 tra i 13 e i 24 anni è «sfiduciato sotto pressione» (24%) o «irrequieto in bilico» (25%).</p>
+      <p class="intro-fine-testo">Secondo Unfiltered, quasi 1 ragazzo su 2 tra i 13 e i 24 anni è «sfiduciato sotto pressione» (24%) o «irrequieto in bilico» (25%).</p>
       <p class="intro-fine-fonte">Fonte: Unfiltered, la ricerca di Unhate Foundation.</p>
     </div>
   </div>
@@ -95,6 +95,8 @@
     var intro = document.getElementById('intro');
     /* Toglie del tutto l'animazione dalla pagina: nessun livello resta sopra i contenuti */
     function togli() {
+      html.style.backgroundColor = '';
+      if (document.body) document.body.style.backgroundColor = '';
       html.classList.remove('con-intro', 'intro-uscita');
       if (intro && intro.parentNode) intro.parentNode.removeChild(intro);
       intro = null;
@@ -110,9 +112,16 @@
     var ridotto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var passo = 0, timer = null, finita = false, yInizio = null;
 
+    /* Safari colora la barra in basso guardando lo sfondo della pagina: durante l'animazione
+       html e body prendono il colore della schermata attiva, alla fine tornano normali */
+    function sfondo(colore) {
+      html.style.backgroundColor = colore;
+      if (document.body) document.body.style.backgroundColor = colore;
+    }
     function mostra(n) {
       passo = n;
       clearTimeout(timer);
+      sfondo(getComputedStyle(schermi[n]).backgroundColor);
       /* sull'ultima schermata il pulsante non salta più: chiude e porta alla pagina */
       bottone.textContent = n === ULTIMO ? 'Continua ↓' : 'Salta';
       for (var i = 0; i < schermi.length; i++) schermi[i].classList.toggle('attivo', i === n);
@@ -944,7 +953,7 @@
     <div class="gesto-card c-giallo">
       <p class="gesto-attacco"><em>Stasera, a cena, prova a chiedere:</em></p>
       <p class="gesto-domanda"><strong>Qual è stata la cosa <span class="segnata">più bella<img class="pennellata dipingi" src="assets/loghi/unhate-pennellata.svg" alt="" aria-hidden="true"></span> della tua settimana?</strong></p>
-      <a class="btn btn-nero btn-grande" href="https://wa.me/?text=Ho%20trovato%20questa%20pagina%20utile%20per%20parlare%20con%20i%20ragazzi.%20%C3%88%20nata%20dallo%20spettacolo%20Chi%20come%20me%3A%20https%3A%2F%2Fwww.unhatefoundation.org%2Fchicomeme" target="_blank" rel="noopener" data-condividi><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#share-network"/></svg>Passaparola</a>
+      <a class="btn btn-nero btn-grande" href="https://wa.me/?text=Ho%20trovato%20questa%20pagina%20utile%20per%20parlare%20con%20i%20ragazzi.%20%C3%88%20nata%20dallo%20spettacolo%20Chi%20come%20me%3A%20https%3A%2F%2Fwww.unhatefoundation.org%2Fchicomeme%2F" target="_blank" rel="noopener" data-condividi><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#share-network"/></svg>Passaparola</a>
     </div>
   </section>
 
@@ -1026,7 +1035,7 @@
       <a href="https://www.linkedin.com/company/unhate-foundation" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#linkedin-logo"/></svg>LinkedIn</a>
     </div>
 
-    <a class="piede-condividi" href="https://wa.me/?text=Ho%20trovato%20questa%20pagina%20utile%20per%20parlare%20con%20i%20ragazzi.%20%C3%88%20nata%20dallo%20spettacolo%20Chi%20come%20me%3A%20https%3A%2F%2Fwww.unhatefoundation.org%2Fchicomeme" target="_blank" rel="noopener" data-condividi><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#share-network"/></svg>Passaparola</a>
+    <a class="piede-condividi" href="https://wa.me/?text=Ho%20trovato%20questa%20pagina%20utile%20per%20parlare%20con%20i%20ragazzi.%20%C3%88%20nata%20dallo%20spettacolo%20Chi%20come%20me%3A%20https%3A%2F%2Fwww.unhatefoundation.org%2Fchicomeme%2F" target="_blank" rel="noopener" data-condividi><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#share-network"/></svg>Passaparola</a>
 
     <ul class="piede-link">
       <li><a href="https://www.unhatefoundation.org/it/privacy-policy">Privacy policy</a></li>

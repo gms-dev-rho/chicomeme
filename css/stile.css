@@ -126,7 +126,8 @@ main { padding-top: var(--barra); }
 .con-intro body { overflow: hidden; }
 .con-intro .intro, .intro-uscita .intro {
   display: block;
-  position: fixed; inset: 0; z-index: 500;
+  /* fino al fondo reale dello schermo, anche sotto la barra dell'indirizzo di Safari */
+  position: fixed; top: 0; left: 0; right: 0; bottom: auto; height: 100vh; height: 100lvh; z-index: 500;
   background: var(--bianco);
   cursor: pointer;
   user-select: none; -webkit-user-select: none;

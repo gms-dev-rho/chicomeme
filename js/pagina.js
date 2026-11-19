@@ -228,7 +228,7 @@ const INFORMATIVA_URL = 'https://www.unhatefoundation.org/it/informativa-privacy
 
   /* ---------- Condivisione ---------- */
   function condivisione() {
-    const testo = 'Ho trovato questa pagina utile per parlare con i ragazzi. È nata dallo spettacolo Chi come me: https://www.unhatefoundation.org/chicomeme';
+    const testo = 'Ho trovato questa pagina utile per parlare con i ragazzi. È nata dallo spettacolo Chi come me: https://www.unhatefoundation.org/chicomeme/';
     document.querySelectorAll('[data-condividi]').forEach((a) => {
       a.addEventListener('click', (e) => {
         if (navigator.share) {
