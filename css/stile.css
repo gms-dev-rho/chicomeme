@@ -635,7 +635,8 @@ main { padding-top: var(--barra); }
 .piede-chi { max-width: var(--colonna); }
 .piede-social { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; margin-bottom: 24px; font-weight: 600; }
 .piede-social a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
-.piede-condividi { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-bottom: 16px; }
+.piede-azioni { display: flex; flex-wrap: wrap; gap: 0 28px; margin-bottom: 16px; }
+.piede-condividi { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
 .piede-condividi .ico { width: 1.25em; height: 1.25em; flex: none; }
 .piede-link { list-style: none; display: flex; flex-wrap: wrap; gap: 0 20px; margin-bottom: 24px; }
 .piede-link a { display: inline-flex; align-items: center; min-height: 44px; }
@@ -715,3 +716,17 @@ main { padding-top: var(--barra); }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .pennellata.dipingi { clip-path: none; }
 }
+
+/* ---------- Tienila a portata di mano ---------- */
+.salva { padding: 44px 0 52px; }
+.salva-titolo { font-size: clamp(1.6rem, 7vw, 2.75rem); line-height: 1.08; letter-spacing: -.03em; margin: 0 0 12px; max-width: 48rem; }
+.salva-testo { font-size: 1.125rem; max-width: var(--colonna); margin: 0 0 20px; }
+.salva-azioni { display: grid; gap: 10px; max-width: 22rem; }
+@media (min-width: 560px) { .salva-azioni { grid-template-columns: auto auto; justify-content: start; max-width: none; } }
+/* pulsante secondario: stessa forma degli altri, solo contorno */
+.btn-secondario { min-height: 52px; padding: 10px 18px; background: transparent; color: var(--nero); border-color: var(--nero); }
+.btn-secondario .ico { width: 1.25em; height: 1.25em; flex: none; }
+@media (hover: hover) { .btn-secondario:hover { background: var(--nero); color: var(--bianco); } }
+.salva-istruzioni { max-width: var(--colonna); margin-top: 14px; padding: 14px 16px; background: var(--grigio); }
+.salva-istruzioni p { margin: 0 0 8px; }
+.salva-istruzioni p:last-child { margin-bottom: 0; }

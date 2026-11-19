@@ -11,6 +11,7 @@
 <meta name="color-scheme" content="only light">
 <link rel="icon" href="assets/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <!-- Anteprima di condivisione (WhatsApp, social): l'immagine deve avere l'indirizzo completo -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Chi come me? Più persone di quanto pensi.">
@@ -26,7 +27,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="assets/font/poppins-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/font/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/stile.css?v=20261119e">
+<link rel="stylesheet" href="css/stile.css?v=20261119f">
 <script>
   /* Animazione d'apertura: una sola volta per visita. Con "riduci movimento" si vede
      subito l'ultima schermata, ferma. In sessionStorage salviamo solo un segnale "già vista",
@@ -42,7 +43,7 @@
     } catch (e) {}
   })();
 </script>
-<script src="js/pagina.js?v=20261119e" defer></script>
+<script src="js/pagina.js?v=20261119f" defer></script>
 <!-- Google Analytics 4: Cookiebot lo attiva solo con il consenso "Marketing", come sul sito della Fondazione.
      Senza consenso questi due script non vengono eseguiti e non parte nessuna chiamata a Google. -->
 <script type="text/plain" data-cookieconsent="marketing" src="https://www.googletagmanager.com/gtag/js?id=G-060Y6CT574" async></script>
@@ -957,6 +958,24 @@
     </div>
   </section>
 
+  <!-- ============ TIENILA A PORTATA DI MANO ============ -->
+  <section class="sezione sezione-chiara salva" id="salva" aria-labelledby="titolo-salva">
+    <div class="sezione-corpo">
+      <h2 class="salva-titolo" id="titolo-salva">Tienila a portata di mano</h2>
+      <p class="salva-testo">Magari oggi non ti serve. Salvala, così la ritrovi quando ne avrai bisogno.</p>
+      <div class="salva-azioni">
+        <button type="button" class="btn btn-secondario" id="salva-home" aria-expanded="false" aria-controls="salva-istruzioni"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#house-line"/></svg>Salvala sul telefono</button>
+        <a class="btn btn-secondario" href="https://wa.me/?text=Chi%20come%20me%20%E2%80%93%20da%20rileggere%20quando%20serve%3A%20https%3A%2F%2Fwww.unhatefoundation.org%2Fchicomeme%2F" target="_blank" rel="noopener" data-traccia="salva_messaggio"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#whatsapp-logo"/></svg>Mandala a te stesso</a>
+      </div>
+      <!-- Istruzioni nella pagina, non in una finestra: senza JavaScript restano visibili tutte e tre -->
+      <div class="salva-istruzioni" id="salva-istruzioni" aria-live="polite">
+        <p data-dispositivo="ios"><strong>Su iPhone (Safari):</strong> tocca <strong>Condividi</strong>, il quadrato con la freccia verso l’alto (se non lo vedi, lo trovi nel menu <strong>···</strong>), poi <strong>Aggiungi alla schermata Home</strong>.</p>
+        <p data-dispositivo="android"><strong>Su Android (Chrome):</strong> tocca il menu <strong>⋮</strong> in alto a destra, poi <strong>Aggiungi a schermata Home</strong>.</p>
+        <p data-dispositivo="altro"><strong>Sul computer:</strong> aggiungila ai preferiti del browser (<strong>Ctrl+D</strong>, oppure <strong>⌘+D</strong> su Mac).</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ RESTIAMO IN CONTATTO ============ -->
   <section class="sezione sezione-nera tono-scuro" id="restiamo-in-contatto" aria-labelledby="titolo-contatto">
     <div class="sezione-testa">
@@ -1035,7 +1054,10 @@
       <a href="https://www.linkedin.com/company/unhate-foundation" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#linkedin-logo"/></svg>LinkedIn</a>
     </div>
 
-    <a class="piede-condividi" href="https://wa.me/?text=Ho%20trovato%20questa%20pagina%20utile%20per%20parlare%20con%20i%20ragazzi.%20%C3%88%20nata%20dallo%20spettacolo%20Chi%20come%20me%3A%20https%3A%2F%2Fwww.unhatefoundation.org%2Fchicomeme%2F" target="_blank" rel="noopener" data-condividi><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#share-network"/></svg>Passaparola</a>
+    <div class="piede-azioni">
+      <a class="piede-condividi" href="https://wa.me/?text=Ho%20trovato%20questa%20pagina%20utile%20per%20parlare%20con%20i%20ragazzi.%20%C3%88%20nata%20dallo%20spettacolo%20Chi%20come%20me%3A%20https%3A%2F%2Fwww.unhatefoundation.org%2Fchicomeme%2F" target="_blank" rel="noopener" data-condividi><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#share-network"/></svg>Passaparola</a>
+      <a class="piede-condividi" href="#salva"><svg class="ico" aria-hidden="true"><use href="assets/icone.svg#house-line"/></svg>Salva questa pagina</a>
+    </div>
 
     <ul class="piede-link">
       <li><a href="https://www.unhatefoundation.org/it/privacy-policy">Privacy policy</a></li>

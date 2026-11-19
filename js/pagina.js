@@ -244,7 +244,38 @@ const INFORMATIVA_URL = 'https://www.unhatefoundation.org/it/informativa-privacy
     });
   }
 
-  /* ---------- Statistiche: numeri, WhatsApp, report, toolkit, richiesta incontro ---------- */
+  /* ---------- Tienila a portata di mano ---------- */
+  function salva() {
+    const btn = document.getElementById('salva-home');
+    const box = document.getElementById('salva-istruzioni');
+    if (!btn || !box) return;
+    const ua = navigator.userAgent;
+    const ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    const dispositivo = ios ? 'ios' : /Android/.test(ua) ? 'android' : 'altro';
+    box.querySelectorAll('[data-dispositivo]').forEach((p) => { p.hidden = p.dataset.dispositivo !== dispositivo; });
+    box.hidden = true; // senza JavaScript restano visibili tutte le istruzioni
+
+    // Chrome per Android: se la pagina si può installare, usiamo il suo invito nativo
+    let invito = null;
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); invito = e; });
+    window.addEventListener('appinstalled', () => { invito = null; });
+
+    btn.addEventListener('click', () => {
+      if (invito) {
+        const p = invito;
+        invito = null; // l'invito si può usare una sola volta
+        p.prompt();
+        p.userChoice.then((r) => traccia('salva_home', { metodo: 'nativo', esito: r.outcome })).catch(() => {});
+        return;
+      }
+      const apri = box.hidden;
+      box.hidden = !apri;
+      btn.setAttribute('aria-expanded', String(apri));
+      if (apri) traccia('salva_home', { metodo: 'istruzioni', dispositivo });
+    });
+  }
+
+  /* ---------- Statistiche: numeri, WhatsApp, report, toolkit, richiesta incontro, salva in WhatsApp ---------- */
   function clic() {
     document.addEventListener('click', (e) => {
       const a = e.target.closest('a');
@@ -350,6 +381,7 @@ const INFORMATIVA_URL = 'https://www.unhatefoundation.org/it/informativa-privacy
   frasi();
   opere();
   condivisione();
+  salva();
   clic();
   modulo();
 })();
